@@ -1,4 +1,6 @@
 // npx sequelize-cli model:generate --name Admin --attributes firstname:string,lastname:string,email:string,password:string
+//npx sequelize-cli db:migrate
+
 /* eslint-disable no-undef */
 const express = require("express"); //importing the Express module in Node.js. Express is a popular web application framework for Node.js that simplifies the process of building web applications and APIs.
 const app = express(); // creating an instace of express using these varible we can define routes
@@ -12,7 +14,7 @@ app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
 app.set("views", path.join(__dirname, "views"));
 
-const { Admin, Player } = require("./models");
+const { Admin, Player,Sport } = require("./models");
 
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
@@ -27,6 +29,7 @@ const passport = require("passport");
 const connectEnsureLogin = require("connect-ensure-login");
 const session = require("express-session");
 const LocalStrategy = require("passport-local");
+const sport = require("./models/sport");
 app.use(flash());
 app.use(
   session({
@@ -134,7 +137,7 @@ app.get("/playersignup", (request, response) => {
 });
 
 app.get("/adminlogin", (request, response) => {
-  response.render("adminlogin", { title: "Adminlogin", csrfToken: request.csrfToken() });
+  response.render("Adminlogin", { title: "Adminlogin", csrfToken: request.csrfToken() });
 });
 app.get("/playerlogin", (request, response) => {
   response.render("playerlogin", { title: "Adminlogin", csrfToken: request.csrfToken() });
@@ -214,6 +217,31 @@ app.post("/adminsignup", async (request, response) => {
         console.log(err);
       }
       response.redirect("/Adminlogin");
+    });
+  } catch (error) {
+    console.log(error);
+    request.flash("error", error.message);
+    return response.redirect("/Adminsignup");
+  }
+});
+/////
+
+app.post("/createsport", async (request, response) => {
+
+  try {
+    const user = await Sport.create({
+      // firstname: request.body.firstName,
+      // lastname: request.body.lastName,
+      // email: request.body.email,
+      // password: hashedpwd,
+      SportName:request.body.sportname
+    });
+    console.log("user", user);
+    request.login(user, (err) => {
+      if (err) {
+        console.log(err);
+      }
+      response.redirect("/createsport");
     });
   } catch (error) {
     console.log(error);
@@ -306,7 +334,7 @@ app.post(
 
 app.get("/welcomeAdmin", (request, response) => {
   const user= request.user;
-  console.log(request.user.firstname+">>>>>>>>>>>>>>>")
+
   response.render("welcomeAdmin", {
     csrfToken: request.csrfToken(),
     uname:user.firstname,

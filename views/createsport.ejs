@@ -2,6 +2,7 @@
     <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <meta name="csrf-token" content="<%= csrfToken %>">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Document</title>
@@ -9,9 +10,10 @@
     <body>
         <h1>Create a new Sport</h1>
         <span>What is this sport's name?</span>
-        <form action="">
-            <input type="text" id="sportname">
-            <input type="submit">
+        <form action="/createsport" method="post">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="text" name="sportname">
+            <button type="submit" >Add</button>
         </form>
        
     </body>
