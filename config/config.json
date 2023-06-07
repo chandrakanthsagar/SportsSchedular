@@ -2,7 +2,7 @@
   "development": {
     "username": "postgres",
     "password": "nani",
-    "database": "wd-sport-dev",
+    "database": "sport-devop",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },

@@ -29,7 +29,8 @@ const passport = require("passport");
 const connectEnsureLogin = require("connect-ensure-login");
 const session = require("express-session");
 const LocalStrategy = require("passport-local");
-const sport = require("./models/sport");
+const { Console } = require("console");
+
 app.use(flash());
 app.use(
   session({
@@ -168,6 +169,37 @@ app.get("/createsport",function(request,response){
     csrfToken: request.csrfToken(),
   });
 });
+//
+app.get(
+  "/sportlist",
+  connectEnsureLogin.ensureLoggedIn(),
+  async function (request, response) {
+    const loggedInUser = request.user.id;
+    console.log("userid+++++++++++++++++++++++++++++++++++++++++"+loggedInUser);
+
+    const UserName = request.user.firstname;
+    Console.log("usdfsdlfsdlkjf________________________________________"+UserName);
+    const sports = await Sport.findAll({
+      where:{
+        adminid:loggedInUser,
+      }
+  });
+    if (request.accepts("html")) {
+      response.render("createsport", {
+        UserName,
+        loggedInUser,
+        sports,
+        csrfToken: request.csrfToken(),
+      });
+    } else {
+      response.json({
+        UserName,
+        loggedInUser,
+        sports,
+      });
+    }
+  }
+);
 
 
 
@@ -224,31 +256,26 @@ app.post("/adminsignup", async (request, response) => {
     return response.redirect("/Adminsignup");
   }
 });
-/////
-
-app.post("/createsport", async (request, response) => {
-
-  try {
-    const user = await Sport.create({
-      // firstname: request.body.firstName,
-      // lastname: request.body.lastName,
-      // email: request.body.email,
-      // password: hashedpwd,
-      SportName:request.body.sportname
-    });
-    console.log("user", user);
-    request.login(user, (err) => {
-      if (err) {
-        console.log(err);
-      }
-      response.redirect("/createsport");
-    });
-  } catch (error) {
-    console.log(error);
-    request.flash("error", error.message);
-    return response.redirect("/Adminsignup");
+///
+app.post(
+  "/sportlist",
+  connectEnsureLogin.ensureLoggedIn(),
+  async function (request, response) {
+    console.log("Creating a Sport", request.body);
+    // console.log(request.user);
+    try {
+      // eslint-disable-next-line no-unused-vars
+      const sport = await Sport.create({
+        sportname: request.body.title,
+        adminid: request.user.id, 
+      });
+      return response.redirect("/sportlist");
+    } catch (error) {
+      console.log(error);
+      return response.status(422).json(error);
+    }
   }
-});
+);
 app.post("/playersignup", async (request, response) => {
   console.log(request.body.firstName);
   const hashedpwd = await bcrypt.hash(request.body.password, saltRounds);

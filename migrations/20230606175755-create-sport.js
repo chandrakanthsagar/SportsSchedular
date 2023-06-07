@@ -9,8 +9,11 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      SportName: {
+      sportname: {
         type: Sequelize.STRING
+      },
+      adminid: {
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,

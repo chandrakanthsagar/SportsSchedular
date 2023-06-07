@@ -14,7 +14,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Sport.init({
-    SportName: DataTypes.STRING
+    sportname: DataTypes.STRING,
+    adminid: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Sport',
