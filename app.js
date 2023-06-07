@@ -124,13 +124,52 @@ passport.deserializeUser((data, done) => {
   }
   
 });
+app.get("/", async function (request, response) {//starting router
+  response.render("start", {
+    title: "sport scheduler Application",
+    csrfToken: request.csrfToken(),
+  });
+});
+app.get("/indexadmin", async function (request, response) {// if you select admin
+  response.render("indexadmin", {
+    title: "indexadmin",
+    csrfToken: request.csrfToken(),
+  });
+});
 
-app.get("/adminsignup", (request, response) => {
+app.get("/adminsignup", (request, response) => {//adminsignup
   response.render("Adminsignup", {
     title: "Adminsignup",
     csrfToken: request.csrfToken(),
   });
 });
+
+app.get("/adminlogin", (request, response) => {//once adminsingup done render adminlogin
+  response.render("Adminlogin", { title: "Adminlogin", csrfToken: request.csrfToken() });
+});
+
+app.get("/welcomeAdmin", async (request, response) => {// adminlogin is succuessful then reder welcome page for admin
+
+  return response.render("WelcomeAdmin", {
+    csrfToken: request.csrfToken(),
+    uname:request.user.firstname,
+  });
+});
+app.get("/createsport",connectEnsureLogin.ensureLoggedIn(),async function(request,response){// when i click on create sport 
+  const UserName = await request.user.firstname;
+  const sports = await Sport.findAll({
+    where:{
+      adminid:request.user.id,
+    }
+});
+return response.render("createsport",{
+  title:"createsport",
+  csrfToken: request.csrfToken(),
+  UserName,
+  sports
+});
+});
+
 app.get("/playersignup", (request, response) => {
   response.render("playersignup", {
     title: "playersignup",
@@ -138,46 +177,21 @@ app.get("/playersignup", (request, response) => {
   });
 });
 
-app.get("/adminlogin", (request, response) => {
-  response.render("Adminlogin", { title: "Adminlogin", csrfToken: request.csrfToken() });
-});
+
 app.get("/playerlogin", (request, response) => {
   response.render("playerlogin", { title: "playerlogin", csrfToken: request.csrfToken() });
 });
 
-app.get("/", async function (request, response) {
-  response.render("start", {
-    title: "sport scheduler Application",
-    csrfToken: request.csrfToken(),
-  });
-});
 
-app.get("/indexadmin", async function (request, response) {
-  response.render("indexadmin", {
-    title: "indexadmin",
-    csrfToken: request.csrfToken(),
-  });
-});
+
+
 app.get("/indexplayer", (request, response) => {
   response.render("indexplayer", {
     title: "sdf",
     csrfToken: request.csrfToken(),
   });
 });
-app.get("/createsport",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
-    const UserName = await request.user.firstname;
-    const sports = await Sport.findAll({
-      where:{
-        adminid:request.user.id,
-      }
-  });
-  return response.render("createsport",{
-    title:"createsport",
-    csrfToken: request.csrfToken(),
-    UserName,
-    sports
-  });
-});
+
 app.get(
   "/allsports",
   connectEnsureLogin.ensureLoggedIn(),
@@ -233,6 +247,8 @@ app.post(
     }
   }
 );
+
+
 
 app.post(
   "/createsession",
@@ -396,13 +412,7 @@ app.post(
 
 // home page for admin
 
-app.get("/welcomeAdmin", async (request, response) => {
 
-  return response.render("WelcomeAdmin", {
-    csrfToken: request.csrfToken(),
-    uname:request.user.firstname,
-  });
-});
 
 
 app.delete(
