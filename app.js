@@ -208,7 +208,7 @@ app.get("/sports/:id",async(request,response)=>{
       id:request.params.id,
     }
   });
-  response.render("adminsession", {
+  response.render("Adminsession", {
     title: "Session",
     sport,
     csrfToken: request.csrfToken(),
