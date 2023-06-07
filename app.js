@@ -142,7 +142,7 @@ app.get("/adminlogin", (request, response) => {
   response.render("Adminlogin", { title: "Adminlogin", csrfToken: request.csrfToken() });
 });
 app.get("/playerlogin", (request, response) => {
-  response.render("playerlogin", { title: "Adminlogin", csrfToken: request.csrfToken() });
+  response.render("playerlogin", { title: "playerlogin", csrfToken: request.csrfToken() });
 });
 
 app.get("/", async function (request, response) {
@@ -394,18 +394,18 @@ app.post(
   }
 );
 
-
 // home page for admin
 
 app.get("/welcomeAdmin", (request, response) => {
-  const user= request.user;
 
   response.render("welcomeAdmin", {
     csrfToken: request.csrfToken(),
-    uname:user.firstname,
+    uname:request.user.firstname,
    
   });
-})
+});
+
+
 app.delete(
   "/sports/:id",
   connectEnsureLogin.ensureLoggedIn(),
