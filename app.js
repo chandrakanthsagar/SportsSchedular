@@ -163,43 +163,83 @@ app.get("/indexplayer", (request, response) => {
     csrfToken: request.csrfToken(),
   });
 });
-app.get("/createsport",function(request,response){
-  response.render("createsport",{
+app.get("/createsport",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
+    const UserName = await request.user.firstname;
+    const sports = await Sport.findAll({
+      where:{
+        adminid:request.user.id,
+      }
+  });
+  return response.render("createsport",{
     title:"createsport",
+    csrfToken: request.csrfToken(),
+    UserName,
+    sports
+  });
+});
+
+app.get("/sports/:id",async(request,response)=>{
+  const sport=await Sport.findOne({
+    where:{
+      id:request.params.id,
+    }
+  });
+  response.render("adminsession", {
+    title: "Session",
+    sport,
     csrfToken: request.csrfToken(),
   });
 });
-//
-app.get(
-  "/sportlist",
+app.post(
+  "/sports",
   connectEnsureLogin.ensureLoggedIn(),
   async function (request, response) {
-    const loggedInUser = request.user.id;
-    console.log("userid+++++++++++++++++++++++++++++++++++++++++"+loggedInUser);
-
-    const UserName = request.user.firstname;
-    Console.log("usdfsdlfsdlkjf________________________________________"+UserName);
-    const sports = await Sport.findAll({
-      where:{
-        adminid:loggedInUser,
-      }
-  });
-    if (request.accepts("html")) {
-      response.render("createsport", {
-        UserName,
-        loggedInUser,
-        sports,
-        csrfToken: request.csrfToken(),
+    console.log("Creating a Sport", request.body);
+    // console.log(request.user);
+    try {
+      // eslint-disable-next-line no-unused-vars
+      const sport = await Sport.create({
+        sportname: request.body.title,
+        adminid: request.user.id, 
       });
-    } else {
-      response.json({
-        UserName,
-        loggedInUser,
-        sports,
-      });
+      return response.redirect("/createSport");
+    } catch (error) {
+      console.log(error);
+      return response.status(422).json(error);
     }
   }
 );
+//
+// app.get(
+//   "/sportlist",
+//   connectEnsureLogin.ensureLoggedIn(),
+//   async function (request, response) {
+//     const loggedInUser = request.user.id;
+   
+
+//     const UserName = request.user.firstname;
+   
+//     const sports = await Sport.findAll({
+//       where:{
+//         adminid:loggedInUser,
+//       }
+//   });
+//     if (request.accepts("html")) {
+//       response.render("createsport", {
+//         UserName,
+//         loggedInUser,
+//         sports,
+//         csrfToken: request.csrfToken(),
+//       });
+//     } else {
+//       response.json({
+//         UserName,
+//         loggedInUser,
+//         sports,
+//       });
+//     }
+//   }
+// );
 
 
 
@@ -257,25 +297,7 @@ app.post("/adminsignup", async (request, response) => {
   }
 });
 ///
-app.post(
-  "/sportlist",
-  connectEnsureLogin.ensureLoggedIn(),
-  async function (request, response) {
-    console.log("Creating a Sport", request.body);
-    // console.log(request.user);
-    try {
-      // eslint-disable-next-line no-unused-vars
-      const sport = await Sport.create({
-        sportname: request.body.title,
-        adminid: request.user.id, 
-      });
-      return response.redirect("/sportlist");
-    } catch (error) {
-      console.log(error);
-      return response.status(422).json(error);
-    }
-  }
-);
+
 app.post("/playersignup", async (request, response) => {
   console.log(request.body.firstName);
   const hashedpwd = await bcrypt.hash(request.body.password, saltRounds);
@@ -368,6 +390,34 @@ app.get("/welcomeAdmin", (request, response) => {
    
   });
 })
+app.delete(
+  "/sports/:id",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    console.log("Deleting a Sport with ID: ", request.params.id);
+    try {
+      await Sport.destroy({
+        where:
+        {
+          id:request.params.id,
+          adminid:request.user.id,
+        }
+      });
+      return response.json({ success: true });
+    } catch (error) {
+      return response.status(422).json(error);
+    }
+  }
+);
+app.get("/signout", (request, response, next) => {
+  //sign out code is here
+  request.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    response.redirect("/"); //redirecting to landing page
+  });
+});
 
 
 
