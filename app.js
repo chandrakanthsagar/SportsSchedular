@@ -396,12 +396,11 @@ app.post(
 
 // home page for admin
 
-app.get("/welcomeAdmin", (request, response) => {
+app.get("/welcomeAdmin", async (request, response) => {
 
-  response.render("welcomeAdmin", {
+  return response.render("WelcomeAdmin", {
     csrfToken: request.csrfToken(),
     uname:request.user.firstname,
-   
   });
 });
 
