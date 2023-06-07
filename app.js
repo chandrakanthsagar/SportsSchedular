@@ -14,7 +14,8 @@ app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
 app.set("views", path.join(__dirname, "views"));
 
-const { Admin, Player,Sport } = require("./models");
+const { Admin, Player,Sport,sessioncreate } = require("./models");
+
 
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
@@ -177,6 +178,29 @@ app.get("/createsport",connectEnsureLogin.ensureLoggedIn(),async function(reques
     sports
   });
 });
+app.get(
+  "/allsports",
+  connectEnsureLogin.ensureLoggedIn(),
+  async function (request, response) {
+    const loggedInUser = request.user.id;
+    const UserName = request.user.firstname;
+    const sports = await Sport.findAll();
+    if (request.accepts("html")) {
+      response.render("allsports", {
+        UserName,
+        loggedInUser,
+        sports,
+        csrfToken: request.csrfToken(),
+      });
+    } else {
+      response.json({
+        UserName,
+        loggedInUser,
+        sports,
+      });
+    }
+  }
+);
 
 app.get("/sports/:id",async(request,response)=>{
   const sport=await Sport.findOne({
@@ -209,37 +233,29 @@ app.post(
     }
   }
 );
-//
-// app.get(
-//   "/sportlist",
-//   connectEnsureLogin.ensureLoggedIn(),
-//   async function (request, response) {
-//     const loggedInUser = request.user.id;
-   
 
-//     const UserName = request.user.firstname;
-   
-//     const sports = await Sport.findAll({
-//       where:{
-//         adminid:loggedInUser,
-//       }
-//   });
-//     if (request.accepts("html")) {
-//       response.render("createsport", {
-//         UserName,
-//         loggedInUser,
-//         sports,
-//         csrfToken: request.csrfToken(),
-//       });
-//     } else {
-//       response.json({
-//         UserName,
-//         loggedInUser,
-//         sports,
-//       });
-//     }
-//   }
-// );
+app.post(
+  "/createsession",
+  connectEnsureLogin.ensureLoggedIn(),
+  async function (request, response) {
+    console.log("Creating a Session to the sport", request.body);
+    try {
+        await sessioncreate .create({
+        starttime: request.body.date,
+        venue: request.body.venue,
+        participants: request.body.joiningplayers
+        .split(",").map((player) => player.trim()),
+        requiredplayers: request.body.recquiedplayers,
+        sportid: request.body.sportid,
+      });
+      return response.redirect(`sports/${request.body.sportid}`);
+    } catch (error) {
+      console.log(error);
+      return response.status(422).json(error);
+    }
+  }
+);
+
 
 
 
@@ -374,7 +390,7 @@ app.post(
   (request, response) => {
     // we are calling this method for authentications
     console.log(request.user);
-    response.redirect("/home");
+    response.redirect("/allsports");
   }
 );
 
