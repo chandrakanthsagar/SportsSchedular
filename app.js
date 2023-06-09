@@ -179,27 +179,27 @@ return response.render("createsport",{
 });
 });
 
-// app.get("/playersignup", (request, response) => {
-//   response.render("playersignup", {
-//     title: "playersignup",
-//     csrfToken: request.csrfToken(),
-//   });
-// });
+app.get("/playersignup", (request, response) => {
+  response.render("playersignup", {
+    title: "playersignup",
+    csrfToken: request.csrfToken(),
+  });
+});
 
 
-// app.get("/playerlogin", (request, response) => {
-//   response.render("playerlogin", { title: "playerlogin", csrfToken: request.csrfToken() });
-// });
+app.get("/playerlogin", (request, response) => {
+  response.render("playerlogin", { title: "playerlogin", csrfToken: request.csrfToken() });
+});
 
 
 
 
-// app.get("/indexplayer", (request, response) => {
-//   response.render("indexplayer", {
-//     title: "sdf",
-//     csrfToken: request.csrfToken(),
-//   });
-// });
+app.get("/indexplayer", (request, response) => {
+  response.render("indexplayer", {
+    title: "sdf",
+    csrfToken: request.csrfToken(),
+  });
+});
 app.get("/viewsports/:id",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
   const loggedInUser=request.user.id;
   const UserName=request.user.firstname;
