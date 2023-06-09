@@ -200,6 +200,44 @@ app.get("/indexplayer", (request, response) => {
     csrfToken: request.csrfToken(),
   });
 });
+
+app.get(
+  "/editsport/:id",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const sport=await Sport.findOne({
+      where:{
+        id:request.params.id,
+      }
+    });
+    try {
+      response.render("Admineditsport", {
+        sport,
+        csrfToken: request.csrfToken(),
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+app.post(
+  "/sport/:id",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const sport=await Sport.findOne({
+      where:{
+        id:request.params.id,
+      }
+    });
+    try {
+      await Sport.updateSportbyId(request.body.name, sport.id);
+      return response.redirect(`/sessionpage/${request.params.id}`);/// redirecting to particular session of the sport created 
+    } catch (error) {
+      console.log(error);
+      return response.status(422).json(error);
+    }
+  }
+);
 app.get("/viewsports/:id",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
   const loggedInUser=request.user.id;
   const UserName=request.user.firstname;
@@ -264,19 +302,6 @@ app.get("/sports/:id",async(request,response)=>{
   });
 });
 
-
-app.get("/sports/:id",async(request,response)=>{
-  const sport=await Sport.findOne({
-    where:{
-      id:request.params.id,
-    }
-  });
-  response.render("Adminsession", {
-    title: "Session",
-    sport,
-    csrfToken: request.csrfToken(),
-  });
-});
 app.post(
   "/sports",
   connectEnsureLogin.ensureLoggedIn(),

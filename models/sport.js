@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
+    static async updateSportbyId(name, id) {
+      return this.update({ name: name },
+        { where: { id: id } });
+    }
   }
   Sport.init({
     sportname: DataTypes.STRING,
