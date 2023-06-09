@@ -1,37 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <meta charset="UTF-8">
     <meta name="csrf-token" content="<%= csrfToken %>"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        h1{
-            text: size 50%;
-        }
-    </style>
-
 </head>
-<body  >
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-
-    <div class="grid grid-cols-6" ">
-        <div class=" col-start-3 col-span-3 ">
-            
-            <h1>Welcome to Sports Schedular</h1>
-            <p class="py-2"> If you are an Admin <a href="/indexadmin" class="text-green-500">Admin</a></p>
-            <p class="py">If you are a Player <a href="/indexplayer" class="text-green-500">Player</a></p>
-      </div>
+<body class="bg-blue-100">
+   
+    
+    <div class="min-h-screen flex justify-center items-center">
+        <div class="text-center">
+            <h1 class="text-4xl mb-4">Welcome to Sports Scheduler</h1>
+            <p class="py-2">If you are an Admin <a href="/indexadmin" class="text-green-500">Admin</a></p>
+            <p class="py-2">If you are a Player <a href="/indexplayer" class="text-green-500">Player</a></p>
+        </div>
     </div>
 </body>
 </html>

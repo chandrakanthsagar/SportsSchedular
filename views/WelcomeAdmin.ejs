@@ -5,18 +5,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<%= csrfToken %>">
-</head>
-<body>
-    <h1>Welcome <%=uname%> !</h1>
-    <h2>Adminstrative Actions</h2>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/styles.css"/> 
+    <body class="bg-blue-100">
+
+    <h1 class="text-center text-4xl my-8">Welcome <%=uname%>!</h1>
+    <p class="text-center text-2xl mb-4">Administrative Actions</p>
     
-    <!-- redirecting to create sport -->
-    <a href="/createsport">Create a sport</a> 
-    <BR></BR>
+    <a href="/createsport" class="text-center mb-4 underline">Create a sport</a>
     <br>
-    <br>
+    <a href="/viewsports/<%= userid %>" class="text-center underline" >View sports</a>
     <hr>
-    <a href="/viewsports/<%= userid %>">View sports</a>
-     
+
 </body>
 </html>

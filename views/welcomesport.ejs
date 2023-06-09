@@ -6,16 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<%= csrfToken %>">
     <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    
-    <h1>Sessions</h1>
-    <h1><span><%= sname%> Id is <%= sport.id%> </span> </h1>
-    
-    <br>
-    <a href="/sports/<%= sportid %>">create a new Session</a>
-    <br>
-    <br>
-    <a href="/allsports">view previous sessions</a>
+<body class="bg-blue-100">
+    <a href="/Welcomeadmin" class="underline">Home</a><span>> <%= sname %></span>
+    <h1 class="text-center text-4xl my-8">Sessions</h1>
+    <h1 class="text-center text-4xl my-4 " ><%= sname %></h1>
+
+    <div class="text-center my-4">
+        <a href="/sports/<%= sportid %>" class="text-blue-500">Create a new Session</a>
+    </div>
+    <div class="text-center my-4">
+        <a href="" class="text-blue-500">View previous sessions</a>
+    </div>
 </body>
 </html>

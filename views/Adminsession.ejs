@@ -8,7 +8,7 @@
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="/css/styles.css"/>
     </head>
-    <body>
+    <body class="bg-blue-100">
         <div class="grid grid-cols-6">
             <div class="col-start-3 col-span-2">
               
@@ -29,7 +29,9 @@
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <input type="hidden" name="sportid" value="<%= sport.id %>">
                     <div>
-                        <label for="date">When will this session get started?</label>
+                        <br>
+                        <br>
+                        <label for="date" class="text-4xl mb-4">When will this session get started?</label>
                         <input type="datetime-local" name="date" placeholder="time" class="border border-gray-300 text-gray-900 rounded p-2 w-full">
                     </div>
                     <div>
