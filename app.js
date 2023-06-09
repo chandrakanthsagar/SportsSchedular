@@ -293,6 +293,22 @@ sportid,
     csrfToken: request.csrfToken(),
   });
 });
+app.get("/sports1/:id",async(request,response)=>{
+  const sport=await Sport.findOne({
+    where:{
+      id:request.params.id,
+    }
+  });
+  const sname=sport.firstname;
+  const sportid=request.params.id;
+  response.render("Adminsession", {
+title: "Session",
+sname,
+sportid,
+    sport,
+    csrfToken: request.csrfToken(),
+  });
+});
 
 
 
