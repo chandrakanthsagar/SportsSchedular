@@ -537,25 +537,25 @@ app.post(
 
 
 
-// app.delete(
-//   "/sports/:id",
-//   connectEnsureLogin.ensureLoggedIn(),
-//   async (request, response) => {
-//     console.log("Deleting a Sport with ID: ", request.params.id);
-//     try {
-//       await Sport.destroy({
-//         where:
-//         {
-//           id:request.params.id,
-//           adminid:request.user.id,
-//         }
-//       });
-//       return response.json({ success: true });
-//     } catch (error) {
-//       return response.status(422).json(error);
-//     }
-//   }
-// );
+app.delete(
+  "/sports/:id",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    console.log("Deleting a Sport with ID: %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%", request.params.id);
+    try {
+      await Sport.destroy({
+        where:
+        {
+          id:request.params.id,
+          adminid:request.user.id,
+        }
+      });
+      return response.json({ success: true });
+    } catch (error) {
+      return response.status(422).json(error);
+    }
+  }
+);
 app.get("/signout", (request, response, next) => {
   //sign out code is here
   request.logout((err) => {
