@@ -178,29 +178,6 @@ return response.render("createsport",{
   csrfToken: request.csrfToken(),
 });
 });
-
-app.get("/playersignup", (request, response) => {
-  response.render("playersignup", {
-    title: "playersignup",
-    csrfToken: request.csrfToken(),
-  });
-});
-
-
-app.get("/playerlogin", (request, response) => {
-  response.render("playerlogin", { title: "playerlogin", csrfToken: request.csrfToken() });
-});
-
-
-
-
-app.get("/indexplayer", (request, response) => {
-  response.render("indexplayer", {
-    title: "sdf",
-    csrfToken: request.csrfToken(),
-  });
-});
-
 app.get(
   "/editsport/:id",
   connectEnsureLogin.ensureLoggedIn(),
@@ -238,19 +215,30 @@ app.post(
     }
   }
 );
+const { Op } = require('sequelize');
+
 app.get("/viewsports/:id",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
   const loggedInUser=request.user.id;
   const UserName=request.user.firstname;
-  const sports = await Sport.findAll({
-    where:{
-      adminid:request.params.id,
-    }
+  const adminId = parseInt(request.params.id, 10); // Parse the id to an integer
+const sports1 = await Sport.findAll({
+  where: {
+    adminid: {
+      [Op.ne]: adminId, // Use Op.ne to indicate "not equal to"
+    },
+  },
+});
+const sports = await Sport.findAll({
+  where: {
+    adminid: adminId,
+  },
 });
 if (request.accepts("html")) {
   response.render("allsports", {
   UserName,
     loggedInUser,
     sports,
+    sports1,
     csrfToken: request.csrfToken(),
   });
 } else {
@@ -295,12 +283,51 @@ app.get("/sports/:id",async(request,response)=>{
       id:request.params.id,
     }
   });
-  response.render("Adminsession", {
-    title: "Session",
+  const sname=sport.firstname;
+  const sportid=request.params.id;
+  response.render("welcomesport", {
+title: "Session",
+sname,
+sportid,
     sport,
     csrfToken: request.csrfToken(),
   });
 });
+
+
+
+
+
+
+
+
+
+
+
+
+app.get("/playersignup", (request, response) => {
+  response.render("playersignup", {
+    title: "playersignup",
+    csrfToken: request.csrfToken(),
+  });
+});
+
+
+app.get("/playerlogin", (request, response) => {
+  response.render("playerlogin", { title: "playerlogin", csrfToken: request.csrfToken() });
+});
+
+
+
+
+app.get("/indexplayer", (request, response) => {
+  response.render("indexplayer", {
+    title: "sdf",
+    csrfToken: request.csrfToken(),
+  });
+});
+
+
 
 app.post(
   "/sports",
@@ -523,6 +550,21 @@ app.get("/signout", (request, response, next) => {
   });
 });
 
+app.post(
+  "/session",
+  passport.authenticate("local", {
+    failureRedirect: "/login",
+    failureFlash: true,
+  }),
+  function (request, response) {
+    console.log(request.user);
+    if (request.user.isadmin==true) {
+      response.redirect("/Adminlogin");
+    } else {
+      response.redirect("/playerlogin");
+    }
+  }
+);
 
 
 module.exports = app;

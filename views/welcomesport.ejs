@@ -9,11 +9,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-blue-100">
-    <a href="/Welcomeadmin" class="underline">Home</a><span>> <%= sname %></span>
+    <a href="/Welcomeadmin" class="underline">Home</a><span>> <%= sport.sportname %></span>
     <a href="/editsport/<%= sportid %>" class="underline">Edit</a>
     
     <h1 class="text-center text-4xl my-8">Sessions</h1>
-    <h1 class="text-center text-4xl my-4 " ><%= sname %></h1>
+    <h1 class="text-center text-4xl my-4 " ><%= sport.sportname %></h1>
 
     <div class="text-center my-4">
         <a href="/sports/<%= sportid %>" class="text-blue-500">Create a new Session</a>
