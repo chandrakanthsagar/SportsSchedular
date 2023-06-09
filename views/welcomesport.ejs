@@ -5,18 +5,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<%= csrfToken %>">
+    <title>Document</title>
 </head>
 <body>
-    <h1>Welcome <%=uname%> !</h1>
-    <h2>Adminstrative Actions</h2>
     
-    <!-- redirecting to create sport -->
-    <a href="/createsport">Create a sport</a> 
-    <BR></BR>
+    <h1>Sessions</h1>
+    <h1><span><%= sname%> Id is <%= sport.id%> </span> </h1>
+    
+    <br>
+    <a href="/sports/<%= sportid %>">create a new Session</a>
     <br>
     <br>
-    <hr>
-    <a href="/viewsports/<%= userid %>">View sports</a>
-     
+    <a href="/allsports">view previous sessions</a>
 </body>
 </html>

@@ -147,50 +147,85 @@ app.get("/adminsignup", (request, response) => {//adminsignup
 app.get("/adminlogin", (request, response) => {//once adminsingup done render adminlogin
   response.render("Adminlogin", { title: "Adminlogin", csrfToken: request.csrfToken() });
 });
+app.post(
+  "/adminlogin",
+  passport.authenticate("admin", {
+    failureRedirect: "/adminlogin",
+    failureFlash: true,
+  }),
+  (request, response) => {
+    
+    console.log(request.user);
+    response.redirect("/welcomeAdmin");//authentication suceesfull
+  }
+);
 
-app.get("/welcomeAdmin", async (request, response) => {// adminlogin is succuessful then reder welcome page for admin
+app.get("/WelcomeAdmin", async (request, response) => {
+  // admin login is successful, then render welcome page for admin
+  const csrfToken = request.csrfToken();
+  const uname = request.user.firstname;
+  const userid = parseInt(request.user.id); // Convert to integer if necessary
 
   return response.render("WelcomeAdmin", {
-    csrfToken: request.csrfToken(),
-    uname:request.user.firstname,
+    csrfToken,
+    uname,
+    userid
   });
 });
+
 app.get("/createsport",connectEnsureLogin.ensureLoggedIn(),async function(request,response){// when i click on create sport 
-  const UserName = await request.user.firstname;
+return response.render("createsport",{
+  csrfToken: request.csrfToken(),
+});
+});
+
+// app.get("/playersignup", (request, response) => {
+//   response.render("playersignup", {
+//     title: "playersignup",
+//     csrfToken: request.csrfToken(),
+//   });
+// });
+
+
+// app.get("/playerlogin", (request, response) => {
+//   response.render("playerlogin", { title: "playerlogin", csrfToken: request.csrfToken() });
+// });
+
+
+
+
+// app.get("/indexplayer", (request, response) => {
+//   response.render("indexplayer", {
+//     title: "sdf",
+//     csrfToken: request.csrfToken(),
+//   });
+// });
+app.get("/viewsports/:id",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
+  const loggedInUser=request.user.id;
+  const UserName=request.user.firstname;
   const sports = await Sport.findAll({
     where:{
-      adminid:request.user.id,
+      adminid:request.params.id,
     }
 });
-return response.render("createsport",{
-  title:"createsport",
-  csrfToken: request.csrfToken(),
+if (request.accepts("html")) {
+  response.render("allsports", {
   UserName,
-  sports
-});
-});
-
-app.get("/playersignup", (request, response) => {
-  response.render("playersignup", {
-    title: "playersignup",
+    loggedInUser,
+    sports,
     csrfToken: request.csrfToken(),
   });
-});
-
-
-app.get("/playerlogin", (request, response) => {
-  response.render("playerlogin", { title: "playerlogin", csrfToken: request.csrfToken() });
-});
-
-
-
-
-app.get("/indexplayer", (request, response) => {
-  response.render("indexplayer", {
-    title: "sdf",
-    csrfToken: request.csrfToken(),
+} else {
+  response.json({
+    UserName,
+    loggedInUser,
+    sports,
   });
-});
+}
+}
+);
+
+
 
 app.get(
   "/allsports",
@@ -228,25 +263,55 @@ app.get("/sports/:id",async(request,response)=>{
     csrfToken: request.csrfToken(),
   });
 });
+
+
+app.get("/sports/:id",async(request,response)=>{
+  const sport=await Sport.findOne({
+    where:{
+      id:request.params.id,
+    }
+  });
+  response.render("Adminsession", {
+    title: "Session",
+    sport,
+    csrfToken: request.csrfToken(),
+  });
+});
 app.post(
   "/sports",
   connectEnsureLogin.ensureLoggedIn(),
   async function (request, response) {
     console.log("Creating a Sport", request.body);
-    // console.log(request.user);
     try {
-      // eslint-disable-next-line no-unused-vars
       const sport = await Sport.create({
         sportname: request.body.title,
-        adminid: request.user.id, 
+        adminid: request.user.id,
       });
-      return response.redirect("/createSport");
+
+      // Access the ID of the created sport using sport.id
+      const sportId = sport.id;
+
+      return response.render("welcomesport", {
+        sname: request.body.title,
+        sport,
+        sportid: parseInt(sportId), // Convert sportId to an integer
+        csrfToken: request.csrfToken(),
+      });
     } catch (error) {
       console.log(error);
       return response.status(422).json(error);
     }
   }
 );
+
+
+
+app.get("/Adminsession",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
+
+  return response.render("Adminsession",{
+   
+  })
+});
 
 
 
@@ -384,18 +449,7 @@ app.post("/playersignup", async (request, response) => {
 
 
 // 2 routers for authentication of admin and player
-app.post(
-  "/adminlogin",
-  passport.authenticate("admin", {
-    failureRedirect: "/adminlogin",
-    failureFlash: true,
-  }),
-  (request, response) => {
-    // we are calling this method for authentications
-    console.log(request.user);
-    response.redirect("/welcomeAdmin");
-  }
-);
+
 
 app.post(
   "/playerlogin",
@@ -415,25 +469,25 @@ app.post(
 
 
 
-app.delete(
-  "/sports/:id",
-  connectEnsureLogin.ensureLoggedIn(),
-  async (request, response) => {
-    console.log("Deleting a Sport with ID: ", request.params.id);
-    try {
-      await Sport.destroy({
-        where:
-        {
-          id:request.params.id,
-          adminid:request.user.id,
-        }
-      });
-      return response.json({ success: true });
-    } catch (error) {
-      return response.status(422).json(error);
-    }
-  }
-);
+// app.delete(
+//   "/sports/:id",
+//   connectEnsureLogin.ensureLoggedIn(),
+//   async (request, response) => {
+//     console.log("Deleting a Sport with ID: ", request.params.id);
+//     try {
+//       await Sport.destroy({
+//         where:
+//         {
+//           id:request.params.id,
+//           adminid:request.user.id,
+//         }
+//       });
+//       return response.json({ success: true });
+//     } catch (error) {
+//       return response.status(422).json(error);
+//     }
+//   }
+// );
 app.get("/signout", (request, response, next) => {
   //sign out code is here
   request.logout((err) => {

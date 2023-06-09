@@ -4,9 +4,7 @@
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="csrf-token" content="<%= csrfToken %>">
-        <title>
-            <%= title %>
-        </title>
+        
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="/css/styles.css"/>
     </head>
@@ -14,7 +12,7 @@
         <div class="grid grid-cols-6">
             <div class="col-start-3 col-span-2">
               
-                <b><h1>New <%= sport.sportname %> Session </h1></b>
+            
                
                 <div>
                     <% if(messages && messages.error && messages.error.length > 0)  { %>
