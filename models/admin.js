@@ -11,6 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Admin.hasMany(models.Session,{
+        foreignKey: "adminId",
+      });
+      Admin.hasMany(models.Sessionplayer,{
+        foreignKey: "adminId",
+            });
     }
    
 

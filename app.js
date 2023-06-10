@@ -1,5 +1,6 @@
 // npx sequelize-cli model:generate --name Admin --attributes firstname:string,lastname:string,email:string,password:string
 //npx sequelize-cli db:migrate
+// npx sequelize-cli migration:create --name ________ 
 
 /* eslint-disable no-undef */
 const express = require("express"); //importing the Express module in Node.js. Express is a popular web application framework for Node.js that simplifies the process of building web applications and APIs.
@@ -13,8 +14,6 @@ const path = require("path");
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
 app.set("views", path.join(__dirname, "views"));
-
-const { Admin, Player,Sport,sessioncreate } = require("./models");
 
 
 app.use(bodyParser.json());
@@ -30,7 +29,7 @@ const passport = require("passport");
 const connectEnsureLogin = require("connect-ensure-login");
 const session = require("express-session");
 const LocalStrategy = require("passport-local");
-const { Console } = require("console");
+// const { Console } = require("console");
 
 app.use(flash());
 app.use(
@@ -124,6 +123,8 @@ passport.deserializeUser((data, done) => {
   }
   
 });
+
+const { Admin, Player,Sport,Session,Sessionplayer} = require("./models");
 app.get("/", async function (request, response) {//starting router
   response.render("start", {
     title: "sport scheduler Application",
@@ -160,7 +161,7 @@ app.post(
   }
 );
 
-app.get("/WelcomeAdmin", async (request, response) => {
+app.get("/WelcomeAdmin",connectEnsureLogin.ensureLoggedIn(),async (request, response) => {
   // admin login is successful, then render welcome page for admin
   const csrfToken = request.csrfToken();
   const uname = request.user.firstname;
@@ -216,6 +217,7 @@ app.post(
   }
 );
 const { Op } = require('sequelize');
+// const sessionplayer = require("./models/sessionplayer");
 
 app.get("/viewsports/:id",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
   const loggedInUser=request.user.id;
@@ -233,9 +235,14 @@ const sports = await Sport.findAll({
     adminid: adminId,
   },
 });
+
+const userstatus=request.user.isadmin;
+
+console.log(+"HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
 if (request.accepts("html")) {
   response.render("allsports", {
-  UserName,
+    userstatus,
+    UserName,
     loggedInUser,
     sports,
     sports1,
@@ -388,15 +395,34 @@ app.post(
   connectEnsureLogin.ensureLoggedIn(),
   async function (request, response) {
     console.log("Creating a Session to the sport", request.body);
+    const playernames = (request.body.joiningplayers).split(",");
+    var adminId,playerId;
+    if(request.user.isadmin==true){
+       adminId=request.user.id;
+    } 
+    else{
+       playerId=request.user.id;
+    }
     try {
-        await sessioncreate .create({
-        starttime: request.body.date,
+        await Session.create({
+        date: request.body.date,
         venue: request.body.venue,
-        participants: request.body.joiningplayers
-        .split(",").map((player) => player.trim()),
-        requiredplayers: request.body.recquiedplayers,
-        sportid: request.body.sportid,
-      });
+        participants:request.body.recquiedplayers,
+        isCreated:true,
+        sportId: request.body.sportid,
+        adminId,
+        playerId,
+        csrfToken: request.csrfToken(),
+        }
+      );
+      for(let i=0;i<playernames.length;i++){
+      await Sessionplayer.create({
+        playername:playernames[i],
+        adminId,
+        playerId,
+        sportId:request.body.sportid,
+      })
+    }
       return response.redirect(`sports/${request.body.sportid}`);
     } catch (error) {
       console.log(error);
@@ -569,7 +595,7 @@ app.get("/signout", (request, response, next) => {
 app.post(
   "/session",
   passport.authenticate("local", {
-    failureRedirect: "/login",
+    failureRedirect: "/",
     failureFlash: true,
   }),
   function (request, response) {
