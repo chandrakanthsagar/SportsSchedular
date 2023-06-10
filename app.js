@@ -209,7 +209,7 @@ app.post(
     });
     try {
       await Sport.updateSportbyId(request.body.name, sport.id);
-      return response.redirect(`/sessionpage/${request.params.id}`);/// redirecting to particular session of the sport created 
+      return response.redirect("/createsession");/// redirecting to particular session of the sport created 
     } catch (error) {
       console.log(error);
       return response.status(422).json(error);
@@ -309,22 +309,22 @@ app.get("/sports/:id", connectEnsureLogin.ensureLoggedIn(), async (request, resp
   });
 });
 
-// app.get("/sports1/:id",async(request,response)=>{
-//   const sport=await Sport.findOne({
-//     where:{
-//       id:request.params.id,
-//     }
-//   });
-//   const sname=sport.firstname;
-//   const sportid=request.params.id;
-//   response.render("Adminsession", {
-// title: "Session",
-// sname,
-// sportid,
-//     sport,
-//     csrfToken: request.csrfToken(),
-//   });
-// });
+app.get("/sports1/:id",async(request,response)=>{
+  const sport=await Sport.findOne({
+    where:{
+      id:request.params.id,
+    }
+  });
+  const sname=sport.firstname;
+  const sportid=request.params.id;
+  response.render("Adminsession", {
+title: "Session",
+sname,
+sportid,
+    sport,
+    csrfToken: request.csrfToken(),
+  });
+});
 
 
 app.get("/playersignup", (request, response) => {
@@ -355,6 +355,7 @@ app.post(
   "/sports",
   connectEnsureLogin.ensureLoggedIn(),
   async function (request, response) {
+
     console.log("Creating a Sport", request.body);
     try {
       const sport = await Sport.create({
@@ -366,6 +367,7 @@ app.post(
       const sportId = sport.id;
 
       return response.render("welcomesport", {
+        loggedInAdmin:request.user.id,
         sname: request.body.title,
         sport,
         sportid: parseInt(sportId), // Convert sportId to an integer
@@ -393,42 +395,70 @@ app.post(
   "/createsession",
   connectEnsureLogin.ensureLoggedIn(),
   async function (request, response) {
-    console.log("Creating a Session to the sport", request.body);
-    const playernames = (request.body.joiningplayers).split(",");
-    var adminId,playerId;
-    if(request.user.isadmin==true){
-       adminId=request.user.id;
-    } 
-    else{
-       playerId=request.user.id;
+    console.log("Creating a Session for the sport", request.body);
+    const { joiningplayers, date, venue, requiredplayers, sportid } = request.body;
+    const playernames = joiningplayers.split(",");
+    
+    let adminId, playerId;
+    if (request.user.isadmin == true) {
+      adminId = request.user.id;
+    } else {
+      playerId = request.user.id;
     }
+    
     try {
-        await Session.create({
-        date: request.body.date,
-        venue: request.body.venue,
-        participants:request.body.recquiedplayers,
-        isCreated:true,
-        sportId: request.body.sportid,
+      const createdSession = await Session.create({
+        date,
+        venue,
+        participants: requiredplayers,
+        isCreated: true,
+        sportId: sportid,
         adminId,
-        playerId,
-        csrfToken: request.csrfToken(),
-        }
-      );
-      for(let i=0;i<playernames.length;i++){
-      await Sessionplayer.create({
-        playername:playernames[i],
-        adminId,
-        playerId,
-        sportId:request.body.sportid,
-      })
-    }
-      return response.redirect(`sports/${request.body.sportid}`);
+        playerId
+      });
+
+      for (let i = 0; i < playernames.length; i++) {
+        await Sessionplayer.create({
+          playername: playernames[i],
+          adminId,
+          playerId,
+          sportId: sportid,
+          sessionId: createdSession.id
+        });
+      }
+
+      return response.redirect(`/createdsession/${createdSession.id}`);
     } catch (error) {
       console.log(error);
       return response.status(422).json(error);
     }
   }
 );
+
+app.get("/createdsession/:id",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
+  const session = await Session.findByPk(request.params.id);
+  const sport = await Sport.findByPk(session.sportId);
+  const players = await Sessionplayer.getPlayers({id:request.params.id})
+  var adminId,playerId;
+  if(request.user.isadmin==true){
+     adminId=request.user.id;
+
+  } 
+  else{
+     playerId=request.user.id;
+  }
+  console.log("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",players);
+  response.render("createdsession",{
+    adminId,
+    playerId,
+    sport,
+    players,
+    session,
+
+    csrfToken: request.csrfToken(),
+  });
+  
+});
 
 
 

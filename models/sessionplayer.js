@@ -21,7 +21,11 @@ module.exports = (sequelize, DataTypes) => {
           foreignKey: 'sportId'
               })
             }
+            static getPlayers({ id }) {
+              return this.findAll({ where: { id } });
+            }
           }
+          
   Sessionplayer.init({
     playername: DataTypes.STRING
   }, {
