@@ -7,15 +7,28 @@
     <meta name="csrf-token" content="<%= csrfToken %>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/styles.css"/> 
-    <body class="bg-blue-100">
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body class="bg-blue-100">
+    <div class="container">
+        <h1 class="text-center text-4xl my-8 text-red-500">Welcome!</h1>
+        <p class="text-center text-2xl mb-4 text-red-500">Administrative Actions</p>
 
-    <h1 class="text-center text-4xl my-8">Welcome !</h1>
-    <p class="text-center text-2xl mb-4">Administrative Actions</p>
-    
-    <a href="/createsport" class="text-center mb-4 underline">Create a sport</a>
-    <br>
-    <a href="/viewsports/<%= userid %>" class="text-center underline" >View sports</a>
-    <hr>
-
+        <a href="/createsport" class="text-center underline" >Create a sport</a>
+        <br>
+        <h1 class="text-center text-4xl my-8 text-red-500">View Sports</h1>
+        <hr>
+        <a href="/adminsports" class="text-center underline">Sports Created by You (admin)</a>
+        <br>
+        <a href="/nonadminsports" class="text-center underline">Sports Created by others Admin</a>
+    </div>
 </body>
 </html>

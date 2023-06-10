@@ -180,7 +180,7 @@ return response.render("createsport",{
 });
 });
 app.get(
-  "/editsport/:id",
+  "/Editsport/:id",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
     const sport=await Sport.findOne({
@@ -189,7 +189,7 @@ app.get(
       }
     });
     try {
-      response.render("Admineditsport", {
+      response.render("Editsport",{
         sport,
         csrfToken: request.csrfToken(),
       });
@@ -217,115 +217,114 @@ app.post(
   }
 );
 const { Op } = require('sequelize');
-// const sessionplayer = require("./models/sessionplayer");
+const { render } = require("ejs");
 
-app.get("/viewsports/:id",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
+app.get("/adminsports",connectEnsureLogin.ensureLoggedIn(),async(request,response)=>{
   const loggedInUser=request.user.id;
   const UserName=request.user.firstname;
-  const adminId = parseInt(request.params.id, 10); // Parse the id to an integer
-const sports1 = await Sport.findAll({
-  where: {
-    adminid: {
-      [Op.ne]: adminId, // Use Op.ne to indicate "not equal to"
+  const adminId = parseInt(loggedInUser, 10); // Parse the id to an integer
+  
+  const sports = await Sport.findAll({
+    where: {
+      adminid: adminId,
     },
-  },
-});
-const sports = await Sport.findAll({
-  where: {
-    adminid: adminId,
-  },
-});
-
-const userstatus=request.user.isadmin;
-
-console.log(+"HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
-if (request.accepts("html")) {
-  response.render("allsports", {
-    userstatus,
-    UserName,
-    loggedInUser,
-    sports,
-    sports1,
-    csrfToken: request.csrfToken(),
   });
-} else {
-  response.json({
-    UserName,
-    loggedInUser,
-    sports,
-  });
-}
-}
-);
-
-
-
-app.get(
-  "/allsports",
-  connectEnsureLogin.ensureLoggedIn(),
-  async function (request, response) {
-    const loggedInUser = request.user.id;
-    const UserName = request.user.firstname;
-    const sports = await Sport.findAll();
-    if (request.accepts("html")) {
-      response.render("allsports", {
-        UserName,
-        loggedInUser,
-        sports,
-        csrfToken: request.csrfToken(),
-      });
-    } else {
-      response.json({
-        UserName,
-        loggedInUser,
-        sports,
-      });
-    }
+  if (request.accepts("html")) {
+    response.render("admincreatedsport", {
+      UserName,
+      loggedInUser,
+      sports,
+      csrfToken: request.csrfToken(),
+    });
+  } else {
+    response.json({
+      UserName,
+      loggedInUser,
+      sports,
+    });
   }
-);
+});
 
-app.get("/sports/:id",async(request,response)=>{
-  const sport=await Sport.findOne({
-    where:{
-      id:request.params.id,
-    }
+app.get("/nonadminsports",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
+  const loggedInUser=request.user.id;
+  const UserName=request.user.firstname;
+  const adminId = parseInt(loggedInUser, 10); // Parse the id to an integer
+  const sports = await Sport.findAll({
+    where: {
+      adminid: {
+        [Op.ne]: adminId, // Use Op.ne to indicate "not equal to"
+      },
+    },
   });
-  const sname=sport.firstname;
-  const sportid=request.params.id;
+  if (request.accepts("html")) {
+    response.render("nonadminsports", {
+      UserName,
+      loggedInUser,
+      sports,
+    
+      csrfToken: request.csrfToken(),
+    });
+  } else {
+    response.json({
+      UserName,
+      loggedInUser,
+      sports,
+    });
+  }
+});
+app.get("/alladminsports",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
+ const sports = await Sport.findAll()
+ if (request.accepts("html")) {
+    response.render("alladminsports", {
+   
+      sports,
+    
+      csrfToken: request.csrfToken(),
+    });
+  } else {
+    response.json({
+      UserName,
+      loggedInUser,
+      sports,
+    });
+  }
+});
+
+app.get("/sports/:id", connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
+  const loggedInAdminId = request.user.id; // Assuming the logged-in user is an admin
+  const sport = await Sport.findOne({
+    where: {
+      id: request.params.id,
+    },
+  });
+  const sname = sport.firstname;
+  const sportid = request.params.id;
   response.render("welcomesport", {
-title: "Session",
-sname,
-sportid,
-    sport,
-    csrfToken: request.csrfToken(),
-  });
-});
-app.get("/sports1/:id",async(request,response)=>{
-  const sport=await Sport.findOne({
-    where:{
-      id:request.params.id,
-    }
-  });
-  const sname=sport.firstname;
-  const sportid=request.params.id;
-  response.render("Adminsession", {
-title: "Session",
-sname,
-sportid,
+    title: "Session",
+    loggedInAdmin: loggedInAdminId, // Update the variable name to loggedInAdmin
+    sname,
+    sportid,
     sport,
     csrfToken: request.csrfToken(),
   });
 });
 
-
-
-
-
-
-
-
-
-
+// app.get("/sports1/:id",async(request,response)=>{
+//   const sport=await Sport.findOne({
+//     where:{
+//       id:request.params.id,
+//     }
+//   });
+//   const sname=sport.firstname;
+//   const sportid=request.params.id;
+//   response.render("Adminsession", {
+// title: "Session",
+// sname,
+// sportid,
+//     sport,
+//     csrfToken: request.csrfToken(),
+//   });
+// });
 
 
 app.get("/playersignup", (request, response) => {
@@ -554,7 +553,7 @@ app.post(
   (request, response) => {
     // we are calling this method for authentications
     console.log(request.user);
-    response.redirect("/allsports");
+    response.redirect("/alladminsports");
   }
 );
 
