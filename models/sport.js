@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "sportId",
             });
     }
-    static async updateSportbyId(name, id) {
+    static async updateSport(name, id) {
       return this.update({ name: name },
         { where: { id: id } });
     }

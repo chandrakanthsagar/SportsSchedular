@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= csrfToken %>" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <title>Sports Scheduler</title>
+    <script>
+    var token = document
+    .querySelector('meta[name="csrf-token"]')
+    .getAttribute("content");
+
+  function deleteSport(id) {
+    fetch(`/sports/${id}`, {
+      method: "delete",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        "_csrf": token
+      })
+    })
+      .then((res) => {
+        if (res.ok) {
+            window.location.replace('/adminpage')
+        }
+      })
+      .catch((err) => console.error(err));
+  }
+</script>
+</head>
+
+<body class="bg-stone-300">
+    <div>
+        <%- include('header') %>
+    </div>
+        
+          
+            <hr class="bg-zinc-100 h-px">
+            <h3 class="text-2xl font-serif text-black-600">Available Sessions</h3>
+            <h4 class="text-xl mt-5 font-serif text-black-600">your sessions </h4>
+              <% c=0 %>
+
+            <% for(var i=0; i<sessions.length; i++) { %>
+                 <div>
+                console.log(<%= players %>); 
+                
+                <% if (session.adminId == adminId) { %>
+                    <% for (var i = 0; i < players.length; i++) { %>
+                    <div class="flex items-center bg-gray-900 p-2 rounded">
+                        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400"><%= players[i].username %></p>
+                    <a class="trash-icon ml-2" href="#" onclick="deletePlayer(<%=players[i].id%>)">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-6 h-6">
+                            <path fill="currentColor" d="M304 160v-32c0-17.69-14.33-32-32-32h-48c-17.67 0-32 14.31-32 32v32h-64v-32C128 78.19 206.19 0 298.67 0h50.66C345.81 0 416 70.24 416 160v32z m-48 256H192v-96h64zm-160 0v-96h64v96zm224 0h-64v-96h64z"/>
+                        </svg>
+                </a>
+            </div>
+             <% if (c==0) {%>
+                <p class="text-m mt-5 font-serif text-black-300">No sessions available</p>
+             <% } %>
+        <% c=0 %>
+        <h4 class="text-xl mt-5 font-serif text-black-600">other sessions</h4>
+
+            <% for(var i=0; i<sessions.length; i++) { %>
+
+                <% if (session.adminId == adminId) { %>
+                    <h1>Session created by you</h1>
+                    <% for (var i = 0; i < players.length; i++) { %>
+                    <div class="flex items-center bg-gray-900 p-2 rounded">
+                        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400"><%= players[i].username %></p>
+                    <a class="trash-icon ml-2" href="#" onclick="deletePlayer(<%=players[i].id%>)">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-6 h-6">
+                            <path fill="currentColor" d="M304 160v-32c0-17.69-14.33-32-32-32h-48c-17.67 0-32 14.31-32 32v32h-64v-32C128 78.19 206.19 0 298.67 0h50.66C345.81 0 416 70.24 416 160v32z m-48 256H192v-96h64zm-160 0v-96h64v96zm224 0h-64v-96h64z"/>
+                        </svg>
+                     </a>
+                    </div>
+                <% } %>
+                <% } %>
+                <% } %>
+                <h1>Sessions created by other</h1>
+                <% for(var i=0; i<sessions.length; i++) { %>
+
+                    <% if (session.adminId == adminId) { %>
+                        <h1>Session created by you</h1>
+                        <% for (var i = 0; i < players.length; i++) { %>
+                        <div class="flex items-center bg-gray-900 p-2 rounded">
+                            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400"><%= players[i].username %></p>
+                        <a class="trash-icon ml-2" href="#" onclick="deletePlayer(<%=players[i].id%>)">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-6 h-6">
+                                <path fill="currentColor" d="M304 160v-32c0-17.69-14.33-32-32-32h-48c-17.67 0-32 14.31-32 32v32h-64v-32C128 78.19 206.19 0 298.67 0h50.66C345.81 0 416 70.24 416 160v32z m-48 256H192v-96h64zm-160 0v-96h64v96zm224 0h-64v-96h64z"/>
+                            </svg>
+                         </a>
+                        </div>
+                    <% } %>
+                    <% } %>
+                    <% } %>
+                
+
+
+
+               
+        </div>
+ </body>
+</html>

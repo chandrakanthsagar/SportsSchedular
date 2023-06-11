@@ -183,13 +183,19 @@ app.get(
   "/Editsport/:id",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
-    const sport=await Sport.findOne({
-      where:{
-        id:request.params.id,
-      }
-    });
     try {
-      response.render("Editsport",{
+      const sport = await Sport.findOne({
+        where: {
+          id: request.params.id,
+        },
+      });
+      
+
+      if (!sport) {
+        return response.status(404).json({ error: "Sport not found" });
+      }
+
+      response.render("Editsport", {
         sport,
         csrfToken: request.csrfToken(),
       });
@@ -198,24 +204,27 @@ app.get(
     }
   }
 );
+
 app.post(
   "/sport/:id",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
-    const sport=await Sport.findOne({
-      where:{
-        id:request.params.id,
-      }
+    const sport = await Sport.findOne({
+      where: {
+        id: request.params.id,
+      },
     });
     try {
-      await Sport.updateSportbyId(request.body.name, sport.id);
-      return response.redirect("/createsession");/// redirecting to particular session of the sport created 
+      await Sport.updateSport(request.body.name, sport.id);
+      return response.redirect("WelcomeAdmin");
     } catch (error) {
       console.log(error);
       return response.status(422).json(error);
     }
   }
 );
+
+
 const { Op } = require('sequelize');
 const { render } = require("ejs");
 
