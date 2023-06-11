@@ -24,25 +24,9 @@
             </h1>
             </h1>
            
-         
-           
-
             <% for(var i=0; i<sessions.length; i++) { %>
-                <% if (sessions.adminId === adminId) { %>
-                    <% for (var i = 0; i < players.length; i++) { %>
-                        <div class="flex items-center bg-blue-500 p-2 rounded">
-                            <p class="text-white"><%= players[i].playername %></p>
-                            <a class="trash-icon ml-2" href="#" onclick="deletePlayer(<%=players[i].id%>)">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>                          
-                            </a>
-                        </div>
-                        
-
-                    
-                    <% } %>
-                <% } %>
+                       <a href="/sessionviewyou/<%=id%>/<%=sessions[i].id%>"><%=sessions[i].date %> </a>
+                       <br>
              <% } %>
             
        

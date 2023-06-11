@@ -364,8 +364,15 @@ app.post(
   "/sports",
   connectEnsureLogin.ensureLoggedIn(),
   async function (request, response) {
+    const enteredSport = request.body.title;
+      const sportsList = await Sport.findAll();
+      if (sportsList.some(sport => sport.sportname === enteredSport)) {
+        request.flash("error", "Sport already exists!");
+        return response.redirect("/createsport");
+      }
+      
 
-    console.log("Creating a Sport", request.body);
+    
     try {
       const sport = await Sport.create({
         sportname: request.body.title,
@@ -388,135 +395,6 @@ app.post(
     }
   }
 );
-
-
-
-app.get("/sessionviewyou/:id",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
-  
-  const sessions = await Session.findAll({
-    where :{
-      sportId: request.params.id,
-    }
-  })
-  const sports = await Sport.findAll({
-    where: {
-      id: request.params.id,
-    },
-  });
-  console.log("sportname : ", request.params.id);
-  console.log("sportname : ", sports.sportname);
-  console.log(sessions[0].venue,"(((((((((((")
-  
-  response.render("sessionviewyou",{
-    adminId,
-    playerId,
-    sports,
-    sessions,
-    csrfToken: request.csrfToken(),
-
-  })
-})
-app.get("/sessionviewothers/:id",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
-  let adminId, playerId;
-    if (request.user.isadmin == true) {
-      adminId = request.user.id;
-    } else {
-      playerId = request.user.id;
-    }
-  const sessions = await Session.findAll({
-    where:{
-      sportId:request.params.id,
-    }
-  })
-  const sport = await Sport.findAll({
-    where:{
-      id:request.params.id,
-    }
-  })
-
-  response.render("sessionviewothers",{
-    playerId,
-    adminId,
-    sport,
-    sessions,
-    csrfToken: request.csrfToken(),
-
-  })
-})
-
-
-app.post(
-  "/createsession",
-  connectEnsureLogin.ensureLoggedIn(),
-  async function (request, response) {
-    console.log("Creating a Session for the sport", request.body);
-    const { joiningplayers, date, venue, requiredplayers, sportid } = request.body;
-    const playernames = joiningplayers.split(",");
-    
-    let adminId, playerId;
-    if (request.user.isadmin == true) {
-      adminId = request.user.id;
-    } else {
-      playerId = request.user.id;
-    }
-    
-    try {
-      const createdSession = await Session.create({
-        date,
-        venue,
-        participants: requiredplayers,
-        isCreated: true,
-        sportId: sportid,
-        adminId,
-        playerId
-      });
-
-      for (let i = 0; i < playernames.length; i++) {
-        await Sessionplayer.create({
-          playername: playernames[i],
-          adminId,
-          playerId,
-          sportId: sportid,
-          sessionId: createdSession.id
-        });
-      }
-
-      return response.redirect(`/createdsession/${createdSession.id}`);
-    } catch (error) {
-      console.log(error);
-      return response.status(422).json(error);
-    }
-  }
-);
-
-app.get("/createdsession/:id",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
-  const session = await Session.findByPk(request.params.id);
-  const sport = await Sport.findByPk(session.sportId);
-  const players = await Sessionplayer.getPlayers({id:request.params.id})
-  var adminId,playerId;
-  if(request.user.isadmin==true){
-     adminId=request.user.id;
-
-  } 
-  else{
-     playerId=request.user.id;
-  }
-  console.log("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",players);
-  response.render("createdsession",{
-    adminId,
-    playerId,
-    sport,
-    players,
-    session,
-
-    csrfToken: request.csrfToken(),
-  });
-  
-});
-
-
-
-
 
 
 // signup page admin
@@ -656,7 +534,7 @@ app.delete(
         where:
         {
           id:request.params.id,
-          adminid:request.user.id,
+          
         }
       });
       return response.json({ success: true });
@@ -690,10 +568,184 @@ app.post(
     }
   }
 );
-app.get("/sessionview",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
 
-})
+
+
+
+app.get("/sessionviewyou/:id",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
+  let adminId, playerId;
+  console.log(request.user.isadmin+"RRRRRRRRRRRRRRRRRRRRRRRRRRRR");
+let sports,sessions;
+  if (request.user.isadmin == true) {
+    adminId = request.user.id;
+    sports = await Sport.findByPk(request.params.id);// retriving sport done 
+     sessions = await Session.findAll({ //sessions retriving done 
+      where: {
+        sportId: request.params.id,
+        adminId:adminId
+      },
+  });
+  } else {
+    playerId = request.user.id;
+     sports = await Sport.findByPk(request.params.id);// retriving sport done 
+     sessions = await Session.findAll({ //sessions retriving done 
+      where: {
+        sportId: request.params.id,
+        playerId:playerId
+      },
+  });
+  
+}
+response.render("sessionviewyou", {
+  adminId,
+  playerId,
+  sports,
+  id:request.params.id,
+  sessions,
+  csrfToken: request.csrfToken(),
+});
+});
+
+
+//   const participants = new Array(sessions.length);
+// for (let j = 0; j < sessions.length; j++) {
+//   const sessionPlayers = await Sessionplayer.findAll({ where: { sessionId: sessions[j].id } });
+//   participants[j] = sessionPlayers.length;
+// }
+// console.log(participants,"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+
+app.get("/sessionviewothers/:id",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
+  let adminId, playerId;
+  console.log(request.user.isadmin+"RRRRRRRRRRRRRRRRRRRRRRRRRRRR");
+let sports,sessions;
+  if (request.user.isadmin == true) {
+    adminId = request.user.id;
+    sports = await Sport.findByPk(request.params.id);// retriving sport done 
+     sessions = await Session.findAll({ //sessions retriving done 
+      where: {
+        sportId: request.params.id
+      },
+  });
+  } else {
+    playerId = request.user.id;
+     sports = await Sport.findByPk(request.params.id);// retriving sport done 
+     sessions = await Session.findAll({ //sessions retriving done 
+      where: {
+        sportId: request.params.id
+      },
+  });
+  
+}
+response.render("sessionviewothers", {
+  adminId,
+  playerId,
+  sports,
+  id:request.params.id,
+  sessions,
+  csrfToken: request.csrfToken(),
+});
+});
+app.get("/sessionviewyou/:id/:sid",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
+
+  const session = await Session.findByPk(request.params.sid);
+  const sport = await Sport.findByPk(session.sportId);
+  const players = await Sessionplayer.getPlayers({id:request.params.sid})
+  var adminId,playerId;
+  if(request.user.isadmin==true){
+     adminId=request.user.id;
+
+  } 
+  else{
+     playerId=request.user.id;
+  }
+  console.log("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",players);
+  response.render("createdsession",{
+    adminId,
+    playerId,
+    sport,
+    players,
+    session,
+
+    csrfToken: request.csrfToken(),
+  });
+  
+});
+
+
+
+
+app.post(
+  "/createsession",
+  connectEnsureLogin.ensureLoggedIn(),
+  async function (request, response) {
+    console.log("Creating a Session for the sport", request.body);
+    const { joiningplayers, date, venue, requiredplayers, sportid } = request.body;
+    const playernames = joiningplayers.split(",");
+    
+    let adminId, playerId;
+    if (request.user.isadmin == true) {
+      adminId = request.user.id;
+    } else {
+      playerId = request.user.id;
+    }
+    
+    try {
+      const createdSession = await Session.create({
+        date,
+        venue,
+        participants: requiredplayers,
+        isCreated: true,
+        sportId: sportid,
+        adminId,
+        playerId
+      });
+
+      for (let i = 0; i < playernames.length; i++) {
+        await Sessionplayer.create({
+          playername: playernames[i],
+          adminId,
+          playerId,
+          sportId: sportid,
+          sessionId: createdSession.id
+        });
+      }
+
+      return response.redirect(`/createdsession/${createdSession.id}`);
+    } catch (error) {
+      console.log(error);
+      return response.status(422).json(error);
+    }
+  }
+);
+
+app.get("/createdsession/:id",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
+  const session = await Session.findByPk(request.params.id);
+  const sport = await Sport.findByPk(session.sportId);
+  const players = await Sessionplayer.getPlayers({id:request.params.id})
+  var adminId,playerId;
+  if(request.user.isadmin==true){
+     adminId=request.user.id;
+
+  } 
+  else{
+     playerId=request.user.id;
+  }
+  console.log("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS",players);
+  response.render("createdsession",{
+    adminId,
+    playerId,
+    sport,
+    players,
+    session,
+
+    csrfToken: request.csrfToken(),
+  });
+  
+});
+
+
+
+
 
 
 module.exports = app;
-
