@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
             });
     }
     static async updateSport(name, id) {
-      return this.update({ name: name },
+      return this.update({ sportname: name },
         { where: { id: id } });
     }
   }

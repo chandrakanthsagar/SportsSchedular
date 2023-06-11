@@ -8,16 +8,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <script src="https://cdn.tailwindcss.com"></script>
-
 </head>
-<body class="bg-blue-100 flex items-center justify-center">
+<body class="bg-blue-100">
     
-    <div class="min-h-screen flex justify-center items-center">
-        <div class="text-center">
-           
-            <%- include('header.ejs') %>
+    <header class="bg-gray-900">
+        <br>
+       <%- include('header.ejs') %>
+       <a href="/signout" class="text-black font-bold text-2xl underline absolute top-2 right-10">Signout</a>
+        <br>
+    </header>
+
+    <div class="flex justify-center items-center h-screen">
+        <div class="bg-white p-8 rounded border border-black shadow-md text-center">
             <h1 class="text-4xl mb-4">Welcome to Admin</h1>
-        
             <p class="py-2">New here? <a href="/adminsignup" class="text-green-500">Sign-up</a></p>
             <p class="py-2">Already have an Account? <a href="/adminlogin" class="text-green-500">Sign-in</a></p>
         </div>

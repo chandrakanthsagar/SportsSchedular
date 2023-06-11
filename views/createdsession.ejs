@@ -62,35 +62,45 @@
             </p>
             <h1 class="mt-4 text-black">Players</h1>
             <div>
-                console.log(<%= players %>); 
+              
                 
-                <% if (session.adminId == adminId) { %>
+                <% if (session.adminId === adminId) { %>
                     <% for (var i = 0; i < players.length; i++) { %>
-                    <div class="flex items-center bg-gray-900 p-2 rounded">
-                        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400"><%= players[i].username %></p>
-                    <a class="trash-icon ml-2" href="#" onclick="deletePlayer(<%=players[i].id%>)">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-6 h-6">
-                            <path fill="currentColor" d="M304 160v-32c0-17.69-14.33-32-32-32h-48c-17.67 0-32 14.31-32 32v32h-64v-32C128 78.19 206.19 0 298.67 0h50.66C345.81 0 416 70.24 416 160v32z m-48 256H192v-96h64zm-160 0v-96h64v96zm224 0h-64v-96h64z"/>
-                        </svg>
-                </a>
-            </div>
+                        <div class="flex items-center bg-blue-500 p-2 rounded">
+                            <p class="text-white"><%= players[i].playername %></p>
+                            <a class="trash-icon ml-2" href="#" onclick="deletePlayer(<%=players[i].id%>)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>                          
+                            </a>
+                        </div>
+                        
 
                     
-            
-                <% if (session.playerId == playerId) { %>
-                    <% for (var i = 0; i < players.length; i++) { %>
-                    <div class="Sport-Item flex items-center">
-                        <div class="flex items-center bg-gray-900 p-1 rounded">
-                            <p class="mb-3 p-2 font-normal text-gray-700 dark:text-gray-400"><%= players[i].username %></p>
-                        </div>
-                    </div>
-                    <% if ((i + 1) % 5 === 0) { %>
-                        <div class="col-span-5"></div>
                     <% } %>
+                <% } %>
+            
+                <% if (session.playerId === playerId) { %>
+                    <% for (var i = 0; i < players.length; i++) { %>
+                        <div class="flex items-center bg-blue-500 p-2 rounded">
+                            <p class="text-white"><%= players[i].playername %></p>
+                            <a class="trash-icon ml-2" href="#" onclick="deletePlayer(<%=players[i].id%>)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>                          
+                            </a>
+                        </div>
                     <% } %>
                 <% } %>
             </div>
             <div class="adminid mt-3 flex gap-4">
+                <a href="#" onclick="joinSession(<%=session.id%>)" class="flex items-center">
+                    <a class="flex items-center" href="#">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
+                        </svg>
+                        <p class="ml-2 text-sky-900">Join Session</p>
+                    </a>
                 <% if (session.adminId === adminId) { %>
                   <a href="#" class="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-sky-900">
@@ -105,12 +115,7 @@
                     <p class="text-sky-900">Cancel Session</p>
                   </a>
                 <% } %>
-                <a href="#" onclick="joinSession(<%=session.id%>)" class="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-sky-900">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg> 
-                  <p class="text-sky-900">Join Session</p>
-                </a>
+               
               </div>
               
             

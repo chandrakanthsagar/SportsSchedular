@@ -20,9 +20,12 @@ module.exports = (sequelize, DataTypes) => {
         Sessionplayer.belongsTo(models.Sport,{
           foreignKey: 'sportId'
               })
+        Sessionplayer.belongsTo(models.Session,{
+          foreignKey: 'sessionId'
+              })
             }
             static getPlayers({ id }) {
-              return this.findAll({ where: { id } });
+              return this.findAll({ where: { sessionId : id } });
             }
           }
           

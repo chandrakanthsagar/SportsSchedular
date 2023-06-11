@@ -20,6 +20,9 @@ module.exports = (sequelize, DataTypes) => {
       Session.belongsTo(models.Sport,{
        foreignKey: 'sportId'
          })
+    Session.hasMany(models.Sessionplayer,{
+            foreignKey: "sessionId",
+                });
       
     }
   }

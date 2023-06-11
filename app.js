@@ -209,14 +209,14 @@ app.post(
   "/sport/:id",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
-    const sport = await Sport.findOne({
-      where: {
-        id: request.params.id,
-      },
-    });
     try {
-      await Sport.updateSport(request.body.name, sport.id);
-      return response.redirect("WelcomeAdmin");
+      console.log("hehe2", request.body.title);
+      console.log("hehehe", request.params.id);
+      await Sport.update(
+        { sportname: request.body.title }, // Replace `name` with the correct attribute name
+        { where: { id: request.params.id } }
+      );
+      return response.redirect("/WelcomeAdmin");
     } catch (error) {
       console.log(error);
       return response.status(422).json(error);
@@ -391,13 +391,58 @@ app.post(
 
 
 
-app.get("/Adminsession",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
-
-  return response.render("Adminsession",{
-   
+app.get("/sessionviewyou/:id",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
+  
+  const sessions = await Session.findAll({
+    where :{
+      sportId: request.params.id,
+    }
   })
-});
+  const sports = await Sport.findAll({
+    where: {
+      id: request.params.id,
+    },
+  });
+  console.log("sportname : ", request.params.id);
+  console.log("sportname : ", sports.sportname);
+  console.log(sessions[0].venue,"(((((((((((")
+  
+  response.render("sessionviewyou",{
+    adminId,
+    playerId,
+    sports,
+    sessions,
+    csrfToken: request.csrfToken(),
 
+  })
+})
+app.get("/sessionviewothers/:id",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
+  let adminId, playerId;
+    if (request.user.isadmin == true) {
+      adminId = request.user.id;
+    } else {
+      playerId = request.user.id;
+    }
+  const sessions = await Session.findAll({
+    where:{
+      sportId:request.params.id,
+    }
+  })
+  const sport = await Sport.findAll({
+    where:{
+      id:request.params.id,
+    }
+  })
+
+  response.render("sessionviewothers",{
+    playerId,
+    adminId,
+    sport,
+    sessions,
+    csrfToken: request.csrfToken(),
+
+  })
+})
 
 
 app.post(
@@ -487,22 +532,22 @@ app.post("/adminsignup", async (request, response) => {
   if (!firstName1) {
     console.log("fir", firstName1);
     request.flash("error", "please enter your first Name");
-    return response.redirect("/Adminsignup");
+    return response.redirect("/adminsignup");
   }
   if (!secondName1) {
     request.flash("error", "please enter your second Name");
-    return response.redirect("/Adminsignup");
+    return response.redirect("/adminsignup");
   }
   if (!email1) {
     request.flash("error", "please enter your Email");
   }
   if (!pwd) {
     request.flash("error", "Please enter valid password");
-    return response.redirect("/Adminsignup");
+    return response.redirect("/adminsignup");
   }
   if (pwd < 8) {
     request.flash("error", "Password length should be atleast 8");
-    return response.redirect("/Adminsignup");
+    return response.redirect("/adminsignup");
   }
   
   try {
@@ -522,7 +567,7 @@ app.post("/adminsignup", async (request, response) => {
   } catch (error) {
     console.log(error);
     request.flash("error", error.message);
-    return response.redirect("/Adminsignup");
+    return response.redirect("/adminsignup");
   }
 });
 ///
@@ -645,6 +690,9 @@ app.post(
     }
   }
 );
+app.get("/sessionview",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
+
+})
 
 
 module.exports = app;
