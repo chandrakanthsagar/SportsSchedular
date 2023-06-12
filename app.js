@@ -742,7 +742,126 @@ app.get("/createdsession/:id",connectEnsureLogin.ensureLoggedIn(),async function
   });
   
 });
+app.get("/deletesession/:sid",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
+  const session =await  Session.findByPk(request.params.id);
+  const sport = await Sport.findByPk(Session.sportId);
+  try {
+    response.render("deletesession", {
+     
+      sport,
+      session,
+      csrfToken: request.csrfToken(),
+    });
+  } catch (error) {
+    console.log(error);
+  }
 
+})
+app.post(
+  "/deletesession/:sid",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    
+    try {
+      const session = await Session.findByPk(request.params.sid);
+      await Session.update(
+        {
+          isCreated: false,
+          message: request.body.reason,
+        },
+        {
+          where: {
+            id: request.params.sid,
+          },
+        }
+      );
+      
+      return response.redirect(`/sessionviewyou/${session.sportId}`);
+    } catch (error) {
+      console.log(error);
+      return response.status(422).json(error);
+    }
+  }
+);
+app.post(
+  "/joinsession/:id",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    let adminId, playerId;
+    if (request.user.isadmin == true) {
+      adminId = request.user.id;
+    } else {
+      playerId = request.user.id;
+    }
+    
+    try {
+      // const session = await Session.findByPk(request.params.id);
+
+      await Sessionplayer.create({
+        playername: request.user.firstName ,
+        adminId:adminId,
+        playerId:playerId,
+      sessionId: request.params.id,
+      });
+      console.log("dfsssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
+      return response.redirect(
+        `/createdsession/${request.params.id}`
+      );
+    } catch (error) {
+      console.log(error);
+      return response.status(422).json(error);
+    }
+  }
+);
+app.get(
+  "/editSession/:id",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const session = await Session.findByPk(request.params.id);
+    const sport = await Sport.findByPk(session.sportname);
+    try {
+      response.render("editSession", {
+        session,
+        sport,
+        csrfToken: request.csrfToken(),
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+app.post(
+  "/editsession/:id",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    const players = request.body.playernames.split(",");
+    const sport = await Sport.findSportById(request.body.sportId);
+   
+    try {
+        const session = Session.findSessionById(request.params.id);
+        await Session.update(
+          {
+            sportname: sport.id,
+            time: request.body.dateTime,
+            address: request.body.address,
+            playernames: players,
+            playerscount: request.body.playersLimit,
+          },
+          {
+            where: {
+              id: request.params.id,
+            },
+          }
+        );
+        
+        response.redirect(`/sessionviewyou/request.params.id`);
+       
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
 
 
 
