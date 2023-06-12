@@ -423,7 +423,7 @@ app.post("/adminsignup", async (request, response) => {
     request.flash("error", "Please enter valid password");
     return response.redirect("/adminsignup");
   }
-  if (pwd < 8) {
+  if (pwd.length < 8) {
     request.flash("error", "Password length should be atleast 8");
     return response.redirect("/adminsignup");
   }
@@ -475,7 +475,7 @@ app.post("/playersignup", async (request, response) => {
     request.flash("error", "Please enter valid password");
     return response.redirect("/playersignup");
   }
-  if (pwd < 8) {
+  if (pwd.length < 8) {
     request.flash("error", "Password length should be atleast 8");
     return response.redirect("/playersignup");
   }
