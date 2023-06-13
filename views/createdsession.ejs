@@ -10,29 +10,13 @@
     <link rel="stylesheet" href="/css/styles.css" />
     <title>Sports Scheduler</title>
     <script>
-      var token = document
-          .querySelector('meta[name="csrf-token"]')
-          .getAttribute("content")
-          
-      function deletePlayer(id) {
-          fetch(`/deleteplayer/${id}`, {
-              method: "delete",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                  "_csrf": token
-              })
-          })
-              .then((res) => {
-                  if (res.ok) {
-                      window.location.reload()
-                  }
-              })
-              .catch((err) => console.error(err))
-      }
-
-      function joinSession(id) {
-            fetch(`/joinsession/${id}`, {
-                method: "post",
+        var token = document
+            .querySelector('meta[name="csrf-token"]')
+            .getAttribute("content");
+      
+        function deletePlayer(id) {
+            fetch(`/deleteplayer/${id}`, {
+                method: "delete",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     "_csrf": token
@@ -40,12 +24,33 @@
             })
                 .then((res) => {
                     if (res.ok) {
-                        window.location.reload()
+                        window.location.reload();
                     }
                 })
-                .catch((err) => console.error(err))
+                .catch((err) => console.error(err));
         }
-        
+      
+        function joinSession(id) {
+            var sessionDate = new Date("<%= session.date %>");
+            var today = new Date();
+      
+            if (sessionDate >= today) {
+                fetch(`/joinsession/${id}`, {
+                    method: "post",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        "_csrf": token
+                    })
+                })
+                    .then((res) => {
+                        if (res.ok) {
+                            window.location.reload();
+                        }
+                    })
+                    .catch((err) => console.error(err));
+            }
+        }
+      
         function Leavesession(id) {
             fetch(`/leavesession/${id}`, {
                 method: "post",
@@ -56,19 +61,21 @@
             })
                 .then((res) => {
                     if (res.ok) {
-                        window.location.reload()
+                        window.location.reload();
                     }
                 })
-                .catch((err) => console.error(err))
+                .catch((err) => console.error(err));
         }
       </script>
+      
+
 </head>
 
 <body class="bg-blue-100">
   <div>
     <%- include('header') %>
   </div>
-       <a href="/sessionpage/<%=session.sportname%>" class="text-red-900 text-sm px-2 py-1 absolute top-2 left-2">Back</a>
+       
         <a href="/signout" class="text-red-900 text-sm px-2 py-1 absolute top-2 right-2">Signout</a>
    
         <div class="p-4 bg-red-50 mt-4">
@@ -76,7 +83,7 @@
             <p class="border border-gray-300 rounded p-4">
                 This session is scheduled for <%= session.date %> and will be played at <%= session.venue %>.
             </p>
-            <h1 class="mt-4 text-4xl">Players <h2>Once you delete the player please reload to see the status</h2></h1>
+            <h1 class="mt-4 text-4xl">Players </h1>
             <div>
               
                 
@@ -84,7 +91,7 @@
                     <% for (var i = 0; i < players.length; i++) { %>
                         <div class="flex items-center bg-blue-500 p-2 rounded">
                             <p class="text-white"><%= players[i].playername %></p>
-                            <a class="trash-icon ml-2" href="#" onclick="deletePlayer(<%=players[i].id%>)">
+                            <a class="trash-icon ml-2" href="" onclick="deletePlayer(<%=players[i].id%>)">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                 </svg>                          

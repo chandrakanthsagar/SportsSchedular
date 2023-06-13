@@ -19,19 +19,42 @@
         
         <a href="/signout" class="text-red-900 text-sm px-2 py-1 absolute top-2 right-2">Signout</a>
         <div class="container mx-auto px-10 py-4"> 
-            <h1 class="text-4xl font-serif text-grey-600 mb-90">
+            <h1 class="text-6xl font-serif text-grey-600 mb-90">
                 <%= sports.sportname %>!
             </h1>
             </h1>
            
          
            
-
+            <h1 class="text-4xl font-serif text-blue-600 mb-90" >Upcoming sessions</h1>
             <% for(var i=0; i<sessions.length; i++) { %>
                 <% if (sessions[i].adminId !== adminId  && sessions[i].playerId !== playerId) { %>
-                    <a href=" /createdsession/<%=sessions[i].id%>" style="display: inline-block; padding: 10px; border: 1px solid #ccc; background-color: #f1f1f1; text-decoration: none; color: #333;"><%= sessions[i].date %></a>
+                    <% if (sessions[i].isCreated && sessions[i].date >= new Date()) { %>
+                        <a href="/createdsession/<%= sessions[i].id %>" class="inline-block px-4 py-2 border border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900">
+                          <%= sessions[i].date %>
+                        </a>
+                  <br>
+                        <br>
+                      <% } %>
+                       
 
-                        
+
+                    
+                  
+                <% } %>
+             <% } %>
+             <h1 class="text-4xl font-serif text-blue-600 mb-90" >Past sessions</h1>
+             <% for(var i=0; i<sessions.length; i++) { %>
+                <% if (sessions[i].adminId !== adminId  && sessions[i].playerId !== playerId) { %>
+                    <% if (sessions[i].isCreated && sessions[i].date < new Date()) { %>
+                        <a href="/createdsession/<%= sessions[i].id %>" class="inline-block px-4 py-2 border border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900">
+                          <%= sessions[i].date %>
+                        </a>
+                  <br>
+                        <br>
+                      <% } %>
+                       
+
 
                     
                   
