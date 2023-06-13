@@ -688,8 +688,7 @@ app.post(
     } else {
       playerId = request.user.id;
     }
-    console.log(request.body.requiedplayers,"fffffffffffffffffffffffff");
-    
+   
     try {
       const createdSession = await Session.create({
         date,
@@ -818,8 +817,11 @@ app.get(
   "/editSession/:id",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
+
+    
     const session = await Session.findByPk(request.params.id);
-    const sport = await Sport.findByPk(session.sportname);
+   const sport = await Sport.findByPk(session.sportId);
+    console.log()
     try {
       response.render("editSession", {
         session,
@@ -836,33 +838,29 @@ app.post(
   "/editsession/:id",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
-    const players = request.body.playernames.split(",");
-    const sport = await Sport.findSportById(request.body.sportId);
-   
-    try {
-        const session = Session.findSessionById(request.params.id);
-        await Session.update(
-          {
-            // sportname: sport.id,
-            // date: request.body.dateTime,
-            // venue: request.body.address,
-            // joiningplayers: players,
-            // recquiedplayers: request.body.playersLimit,
-             
-
-          },
-          {
-            where: {
-              id: request.params.id,
-            },
-          }
-        );
-        
-        response.redirect(`/sessionviewyou/request.params.id`);
-       
-    } catch (error) {
-      console.log(error);
-    }
+ let adminId, playerId;
+ 
+  let sports,sessions;
+  if (request.user.isadmin == true) {
+    adminId = request.user.id;
+    console.log("dfffffffffffffffffffffffffffffff",request.body.sportId);
+    const players = request.body.joiningplayers.split("");
+    sports = await Sport.findByPk(request.body.sportId);// retriving sport done 
+     sessions = await Session.findAll({ //sessions retriving done 
+      where: {
+        sportId: request.params.id
+      },
+  });
+  } else {
+    playerId = request.user.id;
+     sports = await Sport.findByPk(request.params.id);// retriving sport done 
+     sessions = await Session.findAll({ //sessions retriving done 
+      where: {
+        sportId: request.params.id
+      },
+  });
+  
+}
   }
 );
 
