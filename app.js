@@ -679,7 +679,7 @@ app.post(
   connectEnsureLogin.ensureLoggedIn(),
   async function (request, response) {
     console.log("Creating a Session for the sport", request.body);
-    const { joiningplayers, date, venue, requiredplayers, sportid } = request.body;
+    const { joiningplayers, date, venue,  sportid } = request.body;
     const playernames = joiningplayers.split(",");
     
     let adminId, playerId;
@@ -688,12 +688,13 @@ app.post(
     } else {
       playerId = request.user.id;
     }
+    console.log(request.body.requiedplayers,"fffffffffffffffffffffffff");
     
     try {
       const createdSession = await Session.create({
         date,
         venue,
-        participants: requiredplayers,
+        participants:request.body.recquiedplayers,
         isCreated: true,
         sportId: sportid,
         adminId,
@@ -842,11 +843,13 @@ app.post(
         const session = Session.findSessionById(request.params.id);
         await Session.update(
           {
-            sportname: sport.id,
-            time: request.body.dateTime,
-            address: request.body.address,
-            playernames: players,
-            playerscount: request.body.playersLimit,
+            // sportname: sport.id,
+            // date: request.body.dateTime,
+            // venue: request.body.address,
+            // joiningplayers: players,
+            // recquiedplayers: request.body.playersLimit,
+             
+
           },
           {
             where: {
