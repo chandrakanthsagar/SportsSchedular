@@ -19,16 +19,16 @@
             </li>
             <% } %>
                 <% } %>
-        <a href="#" class="text-red-900 text-sm px-2 py-1 absolute top-2 left-2">Back</a>
+        <a href="/" class="text-red-900 text-sm px-2 py-1 absolute top-2 left-2">Back</a>
         <a href="/signout" class="text-red-900 text-sm px-2 py-1 absolute top-2 right-2">Signout</a>
         <div class="grid grid-cols-6">
             <div class="col-start-3 col-span-2">
                 <h1 class="text-xl font-serif text-black-600 mb-90">Cancel Session</h1>
-                <form action="#" method="post">
+                <form action="/deletesession/<%= session.id%>" method="post">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                     <div class="flex gap-2 py-4">
                         <div class="flex-auto">
-                            <input type="text" name="reason" placeholder="State the reason"
+                            <input type="text" name="reason" placeholder="mention reason"
                                 class="border border-sky-900 rounded text-black-900 w-full p-2 text-sm" />
                         </div>
                         <div class="flex-none">

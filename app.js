@@ -365,6 +365,7 @@ app.post(
   connectEnsureLogin.ensureLoggedIn(),
   async function (request, response) {
     const enteredSport = request.body.title;
+    console.log("id1",request.user.id)
       const sportsList = await Sport.findAll();
       if (sportsList.some(sport => sport.sportname === enteredSport)) {
         request.flash("error", "Sport already exists!");
@@ -583,9 +584,7 @@ let sports,sessions;
       where: {
         sportId: request.params.id,
         adminId:adminId,
-        date:{
-          [Op.gt]:new Date(),
-        }
+       
       },
   });
   } else {
@@ -596,9 +595,7 @@ let sports,sessions;
         
         sportId: request.params.id,
         playerId:playerId,
-        date:{
-          [Op.gt]:new Date(),
-        }
+        
       },
   });
   
@@ -631,9 +628,7 @@ let sports,sessions;
      sessions = await Session.findAll({ //sessions retriving done 
       where: {
         sportId: request.params.id,
-        date:{
-          [Op.gt]:new Date(),
-        }
+       
       },
   });
   } else {
@@ -642,9 +637,7 @@ let sports,sessions;
      sessions = await Session.findAll({ //sessions retriving done 
       where: {
         sportId: request.params.id,
-        date:{
-          [Op.gt]:new Date(),
-        }
+       
       },
   });
   
@@ -872,9 +865,7 @@ app.delete(
           id: request.params.id,
         },
       });
-      return response.redirect(
-        `/createdsession/${request.params.id}`
-      );
+      return response.json(true)
     } catch (error) {
       console.log(error);
       return response.status(422).json(error);
@@ -919,9 +910,13 @@ app.post(
       date:request.body.date,
       venue:request.body.Venue,
 
-      participants:request.body.joiningplayers,
+      participants:request.body.recquiedplayers,
      
 
+    },{
+      where:{
+        id:request.params.id,
+      }
     })
 
   } else {
