@@ -367,10 +367,7 @@ app.post(
     const enteredSport = request.body.title;
     console.log("id1",request.user.id)
       const sportsList = await Sport.findAll();
-      if (sportsList.some(sport => sport.sportname === enteredSport)) {
-        request.flash("error", "Sport already exists!");
-        return response.redirect("/createsport");
-      }
+      
       
 
     
