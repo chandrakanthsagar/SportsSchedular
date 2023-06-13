@@ -703,8 +703,6 @@ app.post(
       for (let i = 0; i < playernames.length; i++) {
         await Sessionplayer.create({
           playername: playernames[i],
-          adminId,
-          playerId,
           sportId: sportid,
           sessionId: createdSession.id
         });
@@ -787,26 +785,62 @@ app.post(
   "/joinsession/:id",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
+    // console.log("dfsssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
     let adminId, playerId;
     if (request.user.isadmin == true) {
       adminId = request.user.id;
     } else {
       playerId = request.user.id;
     }
-    
     try {
-      // const session = await Session.findByPk(request.params.id);
-
+    
       await Sessionplayer.create({
-        playername: request.user.firstName ,
+        playername: request.user.firstname ,
         adminId:adminId,
         playerId:playerId,
-      sessionId: request.params.id,
+        sessionId: request.params.id,
       });
-      console.log("dfsssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
       return response.redirect(
         `/createdsession/${request.params.id}`
       );
+    } catch (error) {
+      console.log(error);
+      return response.status(422).json(error);
+    }
+  }
+);
+app.delete(
+  "/leavesession/:id",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    console.log("dfsssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
+    try{
+    let adminId, playerId;
+
+    if (request.user.isadmin == true) {
+      adminId = request.user.id;
+      await Sessionplayer.destroy({
+        where: {
+          adminId: adminId,
+          sessionId: request.params.id,
+        },
+      });
+      return response.redirect(
+        `/createdsession/${request.params.id}`
+      );
+    } else {
+      playerId = request.user.id;
+      await Sessionplayer.destroy({
+        where: {
+          playerId: playerId,
+          sessionId: request.params.id,
+        },
+      });
+      return response.redirect(
+        `/createdsession/${request.params.id}`
+      );
+    }
+  
     } catch (error) {
       console.log(error);
       return response.status(422).json(error);
@@ -839,28 +873,43 @@ app.post(
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
  let adminId, playerId;
- 
+ const players = request.body.joiningplayers.split("");
   let sports,sessions;
   if (request.user.isadmin == true) {
     adminId = request.user.id;
     console.log("dfffffffffffffffffffffffffffffff",request.body.sportId);
-    const players = request.body.joiningplayers.split("");
     sports = await Sport.findByPk(request.body.sportId);// retriving sport done 
-     sessions = await Session.findAll({ //sessions retriving done 
-      where: {
-        sportId: request.params.id
-      },
-  });
+    sessions = await Session.findByPk(request.params.id);
+    await Session.update({
+      id:request.params.id,
+      date:request.body.date,
+      venue:request.body.Venue,
+
+      participants:request.body.joiningplayers,
+     
+
+    })
+
   } else {
     playerId = request.user.id;
-     sports = await Sport.findByPk(request.params.id);// retriving sport done 
-     sessions = await Session.findAll({ //sessions retriving done 
-      where: {
-        sportId: request.params.id
-      },
-  });
+     sports = await Sport.findByPk(request.body.sportId);// retriving sport done 
+     sessions = await Session.findByPk(request.params.id);
+     console.log("dfffffffffffffffffffffffffffffff",request.body.sportId);
+    sports = await Sport.findByPk(request.body.sportId);// retriving sport done 
+    sessions = await Session.findByPk(request.params.id);
+    await Session.update({
+      id:request.params.id,
+      date:request.body.date,
+      venue:request.body.Venue,
+      
+      participants:request.body.joiningplayers,
+     
+
+    })
   
 }
+response.redirect("/sessionviewyou/Session.id");
+
   }
 );
 
