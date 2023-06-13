@@ -27,7 +27,7 @@
                 <a href="/signout" class="text-black font-bold text-2xl underline absolute top-2 right-10">Signout</a>
                 <form action="/editsession/<%= session.id%> " method="post">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                    <input type="hidden" name="sportId"  value="<%= sport.id%>"
+                    <input type="hidden" name="sportId"  value="<%= sport.id%>">
                   
                     <div>
                         <br>

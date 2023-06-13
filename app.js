@@ -582,7 +582,10 @@ let sports,sessions;
      sessions = await Session.findAll({ //sessions retriving done 
       where: {
         sportId: request.params.id,
-        adminId:adminId
+        adminId:adminId,
+        date:{
+          [Op.gt]:new Date(),
+        }
       },
   });
   } else {
@@ -590,8 +593,12 @@ let sports,sessions;
      sports = await Sport.findByPk(request.params.id);// retriving sport done 
      sessions = await Session.findAll({ //sessions retriving done 
       where: {
+        
         sportId: request.params.id,
-        playerId:playerId
+        playerId:playerId,
+        date:{
+          [Op.gt]:new Date(),
+        }
       },
   });
   
@@ -623,7 +630,10 @@ let sports,sessions;
     sports = await Sport.findByPk(request.params.id);// retriving sport done 
      sessions = await Session.findAll({ //sessions retriving done 
       where: {
-        sportId: request.params.id
+        sportId: request.params.id,
+        date:{
+          [Op.gt]:new Date(),
+        }
       },
   });
   } else {
@@ -631,7 +641,10 @@ let sports,sessions;
      sports = await Sport.findByPk(request.params.id);// retriving sport done 
      sessions = await Session.findAll({ //sessions retriving done 
       where: {
-        sportId: request.params.id
+        sportId: request.params.id,
+        date:{
+          [Op.gt]:new Date(),
+        }
       },
   });
   
@@ -809,7 +822,7 @@ app.post(
     }
   }
 );
-app.delete(
+app.post(
   "/leavesession/:id",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
@@ -847,6 +860,28 @@ app.delete(
     }
   }
 );
+
+
+app.delete(
+  "/deleteplayer/:id",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (request, response) => {
+    try{
+      await Sessionplayer.destroy({
+        where: {
+          id: request.params.id,
+        },
+      });
+      return response.redirect(
+        `/createdsession/${request.params.id}`
+      );
+    } catch (error) {
+      console.log(error);
+      return response.status(422).json(error);
+    }
+  }
+);
+
 app.get(
   "/editSession/:id",
   connectEnsureLogin.ensureLoggedIn(),
@@ -881,7 +916,6 @@ app.post(
     sports = await Sport.findByPk(request.body.sportId);// retriving sport done 
     sessions = await Session.findByPk(request.params.id);
     await Session.update({
-      id:request.params.id,
       date:request.body.date,
       venue:request.body.Venue,
 
@@ -898,7 +932,6 @@ app.post(
     sports = await Sport.findByPk(request.body.sportId);// retriving sport done 
     sessions = await Session.findByPk(request.params.id);
     await Session.update({
-      id:request.params.id,
       date:request.body.date,
       venue:request.body.Venue,
       

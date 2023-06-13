@@ -29,7 +29,7 @@
 
             <% for(var i=0; i<sessions.length; i++) { %>
                 <% if (sessions[i].adminId !== adminId  && sessions[i].playerId !== playerId) { %>
-                    <a href="" style="display: inline-block; padding: 10px; border: 1px solid #ccc; background-color: #f1f1f1; text-decoration: none; color: #333;"><%= sessions[i].date %></a>
+                    <a href=" /createdsession/<%=sessions[i].id%>" style="display: inline-block; padding: 10px; border: 1px solid #ccc; background-color: #f1f1f1; text-decoration: none; color: #333;"><%= sessions[i].date %></a>
 
                         
 
