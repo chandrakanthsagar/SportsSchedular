@@ -1,7 +1,6 @@
-# SportsSchedular
+# Sports Schedular Web Application
 
 
-# Sports Session Management System
 
 Welcome to the Sports Session Management System! This application allows administrators to manage available sports, and players to create and join sport sessions (matches).
 
