@@ -47,5 +47,8 @@ Welcome to the Sports Session Management System! This application allows adminis
 - The cancellation reason is shown to other players who have joined the session.
 - Cancelled sessions are clearly marked in the player's session list.
 
+Application link: https://wd-sport-schedular.onrender.com/
+Video link:https://www.loom.com/share/cc3a9ababb54441f88ab7444a79d7420?sid=fdffd2d3-a284-42fd-8796-de5625c78cc7 
+
 
 
