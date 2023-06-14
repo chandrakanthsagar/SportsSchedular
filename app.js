@@ -746,11 +746,12 @@ app.get("/createdsession/:id",connectEnsureLogin.ensureLoggedIn(),async function
 app.get("/deletesession/:sid",connectEnsureLogin.ensureLoggedIn(),async function(request,response){
   const session =await  Session.findByPk(request.params.id);
   const sport = await Sport.findByPk(Session.sportId);
+
   try {
     response.render("deletesession", {
      
       sport,
-      session,
+      sid:request.params.sid,
       csrfToken: request.csrfToken(),
     });
   } catch (error) {
