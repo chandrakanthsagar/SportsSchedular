@@ -49,6 +49,8 @@ Welcome to the Sports Session Management System! This application allows adminis
 
 Application link: https://wd-sport-schedular.onrender.com/
 Video link:https://www.loom.com/share/cc3a9ababb54441f88ab7444a79d7420?sid=fdffd2d3-a284-42fd-8796-de5625c78cc7 
+![Screenshot (263)](https://github.com/chandrakanthsagar/SportsSchedular/assets/109515216/4c37d62e-bafa-487b-ab18-b8bb0d5afb4d)
 
+![Screenshot (263)](https://github.com/chandrakanthsagar/SportsSchedular/assets/109515216/eef2d8a5-8c19-4a1f-a457-b44e5730e65a)
 
 
