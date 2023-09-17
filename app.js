@@ -8,7 +8,7 @@ const app = express(); // creating an instace of express using these varible we 
 const csrf = require("csurf");
 const flash = require("connect-flash");
 const cookieParser = require("cookie-parser");
-const bodyParser = require("body-parser");Body-parser is the Node.js body-parsing middleware. It is responsible for parsing the incoming request bodies in a middleware before you handle it.
+const bodyParser = require("body-parser");//Body-parser is the Node.js body-parsing middleware. It is responsible for parsing the incoming request bodies in a middleware before you handle it.
 const path = require("path");
 
 app.set("view engine", "ejs");
@@ -16,8 +16,9 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("views", path.join(__dirname, "views"));
 
 
-app.use(bodyParser.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json()); //is for parsing JSON data in request bodies.
+app.use(express.urlencoded({ extended: false }));//bodyparser.urlencoded({ extended: true }) is for parsing URL-encoded data (e.g., form submissions).
+//if extended :false only accepts the key value pairs ;
 
 app.use(cookieParser("shh! some secret string"));
 app.use(csrf({ cookie: true }));
