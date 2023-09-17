@@ -8,7 +8,7 @@ const app = express(); // creating an instace of express using these varible we 
 const csrf = require("csurf");
 const flash = require("connect-flash");
 const cookieParser = require("cookie-parser");
-const bodyParser = require("body-parser");
+const bodyParser = require("body-parser");Body-parser is the Node.js body-parsing middleware. It is responsible for parsing the incoming request bodies in a middleware before you handle it.
 const path = require("path");
 
 app.set("view engine", "ejs");
